@@ -28,7 +28,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     return _class
   }
   const _isfocus = EngineStoreCtx.value.id=== widgetId.current
-  return <div {...props} data-widget-priority={props.priority} id={widgetId.current}
+  return <div {...props} id={widgetId.current}
     className={getClassName(_isfocus, props.className)}
     children={(props.renderProps instanceof Function) ? props.renderProps({
       isfocus: _isfocus,
