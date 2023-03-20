@@ -65,7 +65,6 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
         overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
         break;
     }
-
     // 计算当前元素与每个元素之间的距离
     const distance = Math.sqrt(Math.pow(elementCenter.x - currentElementCenter.x, 2) + Math.pow(elementCenter.y - currentElementCenter.y, 2));
     distanceList.push({
