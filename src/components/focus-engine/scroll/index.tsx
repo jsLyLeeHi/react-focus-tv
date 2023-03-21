@@ -16,7 +16,6 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   const { scrollOrientation, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)
   const EngineStoreCtx = useContext(EngineStore)
-
   useEffect(() => {
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return
@@ -38,7 +37,6 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
 
     }
   }, [EngineStoreCtx.value.id])
-
   return <div ref={parentRef} {...restProps}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>
 }

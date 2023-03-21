@@ -8,6 +8,8 @@ type FocusEngineItemProps = {
   children: ReactNode;
   //初始化聚焦优先级 0最高
   priority?: number,
+  /**是否存在scroll中 @default false */
+  inScroll?: boolean,
   renderProps?: (params: { isfocus: boolean, id: string, store: TypeFocusStore.TypeDefStoreData }) => JSX.Element
 } & React.HTMLAttributes<HTMLDivElement>;
 
@@ -16,7 +18,9 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
   const widgetId = useRef(getUUid())
   const EngineStoreCtx = useContext(EngineStore)
   useEffect(() => {
-    EngineStoreCtx.widgetCreate({ id: widgetId.current })
+    EngineStoreCtx.widgetCreate({
+      id: widgetId.current,
+    })
     return () => {
       EngineStoreCtx.widgetDestroy({ id: widgetId.current })
     }
@@ -27,7 +31,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     _class = c + " " + _class
     return _class
   }
-  const _isfocus = EngineStoreCtx.value.id=== widgetId.current
+  const _isfocus = EngineStoreCtx.value.id === widgetId.current
   return <div {...props} id={widgetId.current}
     className={getClassName(_isfocus, props.className)}
     children={(props.renderProps instanceof Function) ? props.renderProps({

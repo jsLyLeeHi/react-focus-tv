@@ -3,9 +3,9 @@ import { TypeKeyCode } from "../key_iptv";
 export namespace TypeFocusStore {
   interface TypeDefStoreData {
     id: string,
-    keyCode: TypeKeyCode
+    keyCode: TypeKeyCode,
   }
   interface TypeWidgetParams {
-    id: string
+    id: string,
   }
 }
