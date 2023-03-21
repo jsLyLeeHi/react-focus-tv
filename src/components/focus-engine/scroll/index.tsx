@@ -30,8 +30,7 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
         /**元素距离父元素顶部的距离 */
         _domScrollTop = targetEl.offsetTop - parentRef.current.offsetTop;
       if (offsetDistance === "center") {
-        const _dis = EngineStoreCtx.value.keyCode === "DOWN" ? (_parH / 2 - _domH / 2) : EngineStoreCtx.value.keyCode === "UP" ? _parH / 2 : 0
-        scrollTo(_domScrollTop - _dis, parentRef)
+        scrollTo(_domScrollTop - (_parH / 2 - _domH / 2), parentRef)
       } else {
         scrollTo(_domScrollTop - offsetDistance, parentRef)
       }
