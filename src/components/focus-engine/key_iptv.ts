@@ -20,8 +20,8 @@ export default {
   8: 56,
   9: 57
 };
-
-export const keyByIptv: { [key: number]: string } = {
+export type TypeKeyCode = "LEFT" | "UP" | "RIGHT" | "DOWN" | "ENTER" | "BACK" | "HOME" | "BACKSPACE" | "DEL" | "MENU" | "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+export const keyByIptv: { [key: number]: TypeKeyCode } = {
   37: "LEFT",
   38: "UP",
   39: "RIGHT",

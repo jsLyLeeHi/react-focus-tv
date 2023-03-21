@@ -1,5 +1,4 @@
-import { keyByIptv } from "../key_iptv";
-import { TypeswitchFocus } from "../engine/type"
+import { keyByIptv, TypeKeyCode } from "../key_iptv";
 
 export function getUUid() {
   //生成一个UUID
@@ -17,11 +16,11 @@ export function getUUid() {
 }
 
 /**监听键盘 */
-export function onEventKeyDown(fn: (key: keyof TypeswitchFocus) => void) {
+export function onEventKeyDown(fn: (key: TypeKeyCode) => void) {
   window.addEventListener("keydown", e => {
     e.preventDefault();
     e.stopPropagation();
-    const _keyValue = keyByIptv[e.keyCode] as (keyof TypeswitchFocus)
+    const _keyValue = keyByIptv[e.keyCode]
     fn(_keyValue)
   })
 }

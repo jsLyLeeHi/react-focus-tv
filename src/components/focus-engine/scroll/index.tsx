@@ -1,5 +1,6 @@
 import React, { ReactNode, useContext, useEffect, useRef } from 'react'
 import { EngineStore } from "../store"
+import { scrollTo } from "./data"
 import "./index.less"
 
 
@@ -7,41 +8,33 @@ type FocusEngineItemProps = {
   children: ReactNode;
   /**滚动轴方向 */
   scrollOrientation: "x" | "y",
+  /**距离边缘的距离 */
+  offsetDistance?: number | "center"
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const Scroll: React.FC<FocusEngineItemProps> = (props) => {
-  const { scrollOrientation, ...restProps } = props;
+  const { scrollOrientation, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)
-  const timer = useRef<number | undefined>()
   const EngineStoreCtx = useContext(EngineStore)
-  function scrollTo(num: number, time = 200) {
-    clearInterval(timer.current)
-    timer.current = undefined
-    if (!parentRef.current) return
-    let _num = parentRef.current.scrollTop, interval = 10
-    /**每次移动的距离 */
-    const distance = (num - parentRef.current.scrollTop) / (time / interval)
-    timer.current = setInterval(() => {
-      if (!parentRef.current) return
-      parentRef.current.scrollTop = _num
-      _num = _num + distance
-      if ((parentRef.current.scrollTop < num) && (_num >= num)) {
-        clearInterval(timer.current)
-        parentRef.current.scrollTop = num
-      }
-      if ((parentRef.current.scrollTop > num) && (_num <= num)) {
-        clearInterval(timer.current)
-        parentRef.current.scrollTop = num
-      }
-    }, interval)
-  }
+
   useEffect(() => {
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return
+    const targetEl = document.getElementById(`${EngineStoreCtx.value.id}`) as HTMLElement;
+    //如果该元素没有在当前的scroll内，则不继续执行
+    if (!parentRef.current.contains(targetEl)) return
     try {
-      const targetEl = document.getElementById(`${EngineStoreCtx.value.id}`) as HTMLElement;
       if (!targetEl) return
-      scrollTo(targetEl.offsetTop - parentRef.current.offsetTop - (parentRef.current.getBoundingClientRect().height / 2))
+      const _parH = parentRef.current.getBoundingClientRect().height,
+        _domH = targetEl.getBoundingClientRect().height,
+        /**元素距离父元素顶部的距离 */
+        _domScrollTop = targetEl.offsetTop - parentRef.current.offsetTop;
+      if (offsetDistance === "center") {
+        const _dis = EngineStoreCtx.value.keyCode === "DOWN" ? (_parH / 2 - _domH / 2) : EngineStoreCtx.value.keyCode === "UP" ? _parH / 2 : 0
+        scrollTo(_domScrollTop - _dis, parentRef)
+      } else {
+        scrollTo(_domScrollTop - offsetDistance, parentRef)
+      }
     } catch (error) {
 
     }

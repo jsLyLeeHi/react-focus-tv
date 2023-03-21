@@ -74,8 +74,11 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
       overlapArea
     })
   }
-  const overlapAreaList = distanceList.filter(v => v.overlapArea && (v.id !== currentElementId) && v.isSameDirection)
+  //查找移动方向上的焦点元素
   const isSameDirectionList = distanceList.filter(v => v.isSameDirection && (v.id !== currentElementId))
+  //查找出移动方向上与当前元素坐标方向上有面积重合的焦点元素
+  const overlapAreaList = isSameDirectionList.filter(v => v.overlapArea)
+  //优先使用面积重合的元素
   const _list = overlapAreaList.length > 0 ? overlapAreaList : isSameDirectionList
 
   // 初始化距离和最近元素的变量
