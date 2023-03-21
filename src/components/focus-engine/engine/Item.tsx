@@ -15,7 +15,7 @@ type FocusEngineItemProps = {
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
-  const widgetId = useRef(getUUid())
+  const widgetId = useRef(props.id || getUUid())
   const EngineStoreCtx = useContext(EngineStore)
   useEffect(() => {
     EngineStoreCtx.widgetCreate({

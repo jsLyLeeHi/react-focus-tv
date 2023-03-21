@@ -11,6 +11,8 @@ export type FocusEngineProps = {
   children: ReactNode;
   /**是否监听keydown @default true */
   listenerKeydown?: boolean;
+  /**默认选中焦点元素的id */
+  focusId?: string,
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export type FocusEngineItemProps = {
