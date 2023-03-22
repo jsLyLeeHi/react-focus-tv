@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { onEventKeyDown } from '../path/untils'
 import { EngineStore, defStoreData } from "../store"
 import { TypeFocusStore } from "../store/index.d"
 import { switchFocus, isInScrollId } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdList } from './type'
 import { EngineItem } from "./Item"
 import { cloneDeep } from 'lodash'
+import { onKeyDownIntercept } from "../path/untils"
 
 
 const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
@@ -74,9 +74,13 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     }
   }, [focusList.current])
   useEffect(function () {
-    onEventKeyDown(function (ev) {
+    /**按键按下 */
+    function onKeyDown(e: KeyboardEvent) {
+      const _keyValue = onKeyDownIntercept(e)
+      if (!_keyValue) return
+      //如果设置不监听按键，则不继续执行
       if (listenerKeydown === false) return
-      const moveFn = switchFocus[ev as keyof TypeswitchFocus]
+      const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
       let _id = refStoreValue.current.id
       if ((moveFn instanceof Function) && refStoreValue.current.id) {
         const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, scrollList.current)
@@ -91,10 +95,14 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       }
       setStore({
         ...refStoreValue.current,
-        keyCode: ev,
+        keyCode: _keyValue,
         id: _id
       })
-    })
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+    }
   }, [])
   return (
     <EngineStore.Provider value={{ value: storeValue, focusList: focusList.current, widgetCreate, widgetDestroy, setCurentId, scrollEleChange }}>

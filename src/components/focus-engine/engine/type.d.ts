@@ -1,3 +1,4 @@
+import { TypeKeyCode } from "../key_iptv";
 type TypeswitchFocusFun = (id: string, _list: string[], scrollList: TypeScrollIdList) => string | null | undefined
 export type TypeScrollIdList = { id: string, cacheFocusId?: string, list: string[] }[]
 export type TypeswitchFocus = {
@@ -20,5 +21,8 @@ export type FocusEngineItemProps = {
   children: ReactNode;
   //初始化聚焦优先级 0最高
   priority?: number,
+  /**是否存在scroll中 @default false */
+  inScroll?: boolean,
+  onInput?: (ev: TypeKeyCode) => void,
   renderProps?: (params: { isfocus: boolean, id: string, store: TypeFocusStore.TypeDefStoreData }) => JSX.Element
 } & React.HTMLAttributes<HTMLDivElement>;

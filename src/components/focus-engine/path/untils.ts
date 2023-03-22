@@ -1,4 +1,5 @@
-import { keyByIptv, TypeKeyCode } from "../key_iptv";
+import { keyByIptv } from "../key_iptv";
+import { config } from "../path/config"
 
 export function getUUid() {
   //生成一个UUID
@@ -15,12 +16,17 @@ export function getUUid() {
   return uuid;
 }
 
-/**监听键盘 */
-export function onEventKeyDown(fn: (key: TypeKeyCode) => void) {
-  window.addEventListener("keydown", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    const _keyValue = keyByIptv[e.keyCode]
-    fn(_keyValue)
-  })
+const timer: { current: number | undefined } = { current: undefined }
+/**监听键盘拦截 */
+export function onKeyDownIntercept(ev: KeyboardEvent) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  //设置单次按键间隔时间
+  if (timer.current) return
+  timer.current = setTimeout(() => {
+    clearTimeout(timer.current)
+    timer.current = undefined
+  }, config.clickInterval);
+  const _keyValue = keyByIptv[ev.keyCode]
+  return _keyValue
 }

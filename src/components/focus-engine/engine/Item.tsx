@@ -1,18 +1,9 @@
-import React, { useEffect, useRef, ReactNode, useContext } from 'react'
+import React, { useEffect, useRef, useContext } from 'react'
 import { getUUid } from '../path/untils'
 import { EngineStore } from "../store"
-import { TypeFocusStore } from "../store/index.d"
+import { keyByIptv } from "../key_iptv";
+import { FocusEngineItemProps } from "./type"
 import "./index.less"
-
-
-type FocusEngineItemProps = {
-  children: ReactNode;
-  //初始化聚焦优先级 0最高
-  priority?: number,
-  /**是否存在scroll中 @default false */
-  inScroll?: boolean,
-  renderProps?: (params: { isfocus: boolean, id: string, store: TypeFocusStore.TypeDefStoreData }) => JSX.Element
-} & React.HTMLAttributes<HTMLDivElement>;
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
@@ -26,6 +17,29 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       EngineStoreCtx.widgetDestroy({ id: widgetId.current })
     }
   }, [])
+  useEffect(() => {
+    if ((props.onFocus instanceof Function) && (EngineStoreCtx.value.id === widgetId.current)) {
+      const _ev: any = true
+      props.onFocus(_ev)
+    }
+    function onItemKeyDown(ev: any) {
+      if (EngineStoreCtx.value.id !== widgetId.current) return
+      ev.preventDefault();
+      ev.stopPropagation();
+      const _keyValue = keyByIptv[ev.keyCode]
+      if (!_keyValue) return
+      if ((props.onClick instanceof Function) && _keyValue === "ENTER") {
+        props.onClick(ev)
+      }
+      if ((props.onInput instanceof Function) && _keyValue !== "ENTER") {
+        props.onInput(_keyValue)
+      }
+    }
+    window.addEventListener("keydown", onItemKeyDown)
+    return () => {
+      window.removeEventListener("keydown", onItemKeyDown)
+    }
+  }, [EngineStoreCtx.value.id])
   function getClassName(_focus: boolean, c?: string) {
     let _class = _focus ? "widget-focus" : "widget-unfocus"
     if (!c) return _class

@@ -1,17 +1,10 @@
 import { FocusEngine, FocusScroll } from '@/components/focus-engine';
-import { useEffect, useState } from 'react';
 import "./index.less"
 
 export default function MyPage() {
-  const [focusId, setFocusId] = useState<string>()
-  useEffect(() => {
-    setTimeout(() => {
-      setFocusId("sadfashdfsf")
-    }, 1000);
-  }, [])
   return (
     <>
-      <FocusEngine className="index-box" focusId={focusId}>
+      <FocusEngine className="index-box">
         <FocusEngine.Item className='index-item'>222</FocusEngine.Item>
         <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
           <FocusEngine.Item className='index-item'>6</FocusEngine.Item>
@@ -31,8 +24,8 @@ export default function MyPage() {
           <FocusEngine.Item className='index-item'>10</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>11</FocusEngine.Item>
         </FocusScroll>
-        {/* <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}> */}
-        <FocusScroll cacheFocus scrollOrientation='x' className='scrollx'>
+        <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
+        {/* <FocusScroll cacheFocus scrollOrientation='x' className='scrollx'> */}
           <FocusEngine.Item className='index-item'>6</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>7</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>8</FocusEngine.Item>
