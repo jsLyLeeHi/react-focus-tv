@@ -1,16 +1,21 @@
-import { TypeswitchFocus } from "./type"
+import { TypeswitchFocus, TypeScrollIdList } from "./type"
+
+
+
+
+
 export const switchFocus: TypeswitchFocus = {
-  "RIGHT": function (id, _list) {
-    return getNearestElementId(id, _list, "RIGHT")
+  "RIGHT": function (id, _list, scrollList) {
+    return getNearestElementId(id, _list, scrollList, "RIGHT")
   },
-  "LEFT": function (id, _list) {
-    return getNearestElementId(id, _list, "LEFT")
+  "LEFT": function (id, _list, scrollList) {
+    return getNearestElementId(id, _list, scrollList, "LEFT")
   },
-  "UP": function (id, _list) {
-    return getNearestElementId(id, _list, "UP")
+  "UP": function (id, _list, scrollList) {
+    return getNearestElementId(id, _list, scrollList, "UP")
   },
-  "DOWN": function (id, _list) {
-    return getNearestElementId(id, _list, "DOWN")
+  "DOWN": function (id, _list, scrollList) {
+    return getNearestElementId(id, _list, scrollList, "DOWN")
   },
 }
 
@@ -23,7 +28,7 @@ type Direction = "RIGHT" | "LEFT" | "UP" | "DOWN";
  * @param direction 要查找的方向，必须是 "RIGHT"、"LEFT"、"UP" 或 "DOWN" 中的一个。
  * @returns 距离当前元素指定方向最近的元素的id，如果找不到，则返回 null。
  */
-function getNearestElementId(currentElementId: string, allElementsIdList: string[], direction: Direction): string | null {
+function getNearestElementId(currentElementId: string, allElementsIdList: string[], scrollList: TypeScrollIdList, direction: Direction): string | null {
   // 获取当前元素的DOM元素节点和位置信息
   const currentElement = document.getElementById(currentElementId) as HTMLElement;
   const currentElementRect = currentElement.getBoundingClientRect();
@@ -32,7 +37,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
     y: currentElementRect.top + currentElementRect.height / 2,
   };
 
-  const distanceList: { id: string, distance: number, isSameDirection: boolean, overlapArea: boolean, }[] = []
+  const distanceList: { id: string, distance: number, isScrollVisual: boolean, isSameDirection: boolean, overlapArea: boolean, }[] = []
   // 遍历所有元素的id列表
   for (const id of allElementsIdList) {
     // 获取当前元素的DOM元素节点和位置信息
@@ -47,6 +52,9 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
     let isSameDirection = false;
     // 检查目标轴上有重叠部分的目标元素
     let overlapArea = false;
+    // 检查元素是否在scroll中可视
+    let isScrollVisual = isVisualInScroll(scrollList, element);
+
     switch (direction) {
       case "RIGHT":
         isSameDirection = elementCenter.x > currentElementCenter.x;
@@ -70,12 +78,15 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
     distanceList.push({
       id,
       distance,
+      isScrollVisual,
       isSameDirection,
       overlapArea
     })
   }
+  //查找移动方向上的scroll可视区域内的元素
+  const isScrollVisualList = distanceList.filter(v => v.isScrollVisual)
   //查找移动方向上的焦点元素
-  const isSameDirectionList = distanceList.filter(v => v.isSameDirection && (v.id !== currentElementId))
+  const isSameDirectionList = isScrollVisualList.filter(v => v.isSameDirection && (v.id !== currentElementId))
   //查找出移动方向上与当前元素坐标方向上有面积重合的焦点元素
   const overlapAreaList = isSameDirectionList.filter(v => v.overlapArea)
   //优先使用面积重合的元素
@@ -86,7 +97,48 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
   return minDistanceElement?.id;
 }
 
+/**查找元素是否在scroll的可是区域内 */
+function isVisualInScroll(idList: TypeScrollIdList, ele: HTMLElement) {
+  let isVisual = true
+  for (let i = 0; i < idList.length; i++) {
+    const val = idList[i];
+    const dom = document.getElementById(val.id) as HTMLElement
+    if (dom.contains(ele)) {
+      const containerRect = dom.getBoundingClientRect();
+      const childRect = ele.getBoundingClientRect();
+      // isInViewport 表示子元素是否在可视区域内
+      isVisual =
+        childRect.top >= containerRect.top &&
+        childRect.bottom <= containerRect.bottom &&
+        childRect.left >= containerRect.left &&
+        childRect.right <= containerRect.right;
+      if (!isVisual) {
+        isVisual = false
+        continue
+      }
+    }
+  }
+  return isVisual
+}
 
+/**查找是否在scroll组件中，如果在组件中，则使用scroll组件中的缓存id，没有则返回当前id */
+export function isInScrollId(id: string, scrollList: TypeScrollIdList) {
+  let _returnId
+  for (let pidx = 0; pidx < scrollList.length; pidx++) {
+    const pval = scrollList[pidx];
+    let _isInThisScroll = false
+    for (let i = 0; i < pval.list.length; i++) {
+      const v = pval.list[i];
+      if (v === id) {
+        _returnId = pval.cacheFocusId;
+        _isInThisScroll = true
+        continue;
+      }
+    }
+    if (_isInThisScroll) continue;
+  }
+  return _returnId
+}
 /**
  * 计算两个矩形元素之间x/y轴上的重叠部分。
  * @param element1 第一个元素。

@@ -31,14 +31,12 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   }
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
-    if (!cacheFocusId.current || !cacheFocus) return
     const _foucsItemList = findFocusList()
     EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId.current, list: _foucsItemList })
     return () => {
-      if (!cacheFocusId.current || !cacheFocus) return
       EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId.current, list: _foucsItemList }, "destroy")
     }
-  }, [cacheFocusId.current])
+  }, [cacheFocusId.current, props.children])
   useEffect(() => {
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return
@@ -47,18 +45,50 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
     cacheFocusId.current = EngineStoreCtx.value.id
-    try {
-      const _parH = parentRef.current.getBoundingClientRect().height,
-        _domH = targetEl.getBoundingClientRect().height,
-        /**元素距离父元素顶部的距离 */
-        _domScrollTop = targetEl.offsetTop - parentRef.current.offsetTop;
-      if (offsetDistance === "center") {
-        scrollTo(_domScrollTop - (_parH / 2 - _domH / 2), parentRef)
-      } else {
-        scrollTo(_domScrollTop - offsetDistance, parentRef)
-      }
-    } catch (error) {
+    if (scrollOrientation === "x") {
+      try {
+        const _parW = parentRef.current.getBoundingClientRect().width,
+          _domW = targetEl.getBoundingClientRect().width,
+          /**元素距离父元素顶部的距离 */
+          _domScrollLeft = targetEl.offsetLeft - parentRef.current.offsetLeft;
+        if (offsetDistance === "center") {
+          scrollTo({
+            num: _domScrollLeft - (_parW / 2 - _domW / 2),
+            scrollOrientation,
+            parentRef
+          })
+        } else {
+          scrollTo({
+            num: _domScrollLeft - offsetDistance,
+            scrollOrientation,
+            parentRef
+          })
+        }
+      } catch (error) {
 
+      }
+    } else {
+      try {
+        const _parH = parentRef.current.getBoundingClientRect().height,
+          _domH = targetEl.getBoundingClientRect().height,
+          /**元素距离父元素顶部的距离 */
+          _domScrollTop = targetEl.offsetTop - parentRef.current.offsetTop;
+        if (offsetDistance === "center") {
+          scrollTo({
+            num: _domScrollTop - (_parH / 2 - _domH / 2),
+            scrollOrientation,
+            parentRef
+          })
+        } else {
+          scrollTo({
+            num: _domScrollTop - offsetDistance,
+            scrollOrientation,
+            parentRef
+          })
+        }
+      } catch (error) {
+
+      }
     }
   }, [EngineStoreCtx.value.id])
   return <div ref={parentRef} {...restProps} id={widgetId.current}

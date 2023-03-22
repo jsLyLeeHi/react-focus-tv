@@ -2,6 +2,7 @@ import React, { useEffect, useRef, ReactNode, useContext } from 'react'
 import { getUUid } from '../path/untils'
 import { EngineStore } from "../store"
 import { TypeFocusStore } from "../store/index.d"
+import "./index.less"
 
 
 type FocusEngineItemProps = {
@@ -29,7 +30,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     let _class = _focus ? "widget-focus" : "widget-unfocus"
     if (!c) return _class
     _class = c + " " + _class
-    return _class
+    return _class + " focus-item"
   }
   const _isfocus = EngineStoreCtx.value.id === widgetId.current
   return <div {...props} id={widgetId.current}

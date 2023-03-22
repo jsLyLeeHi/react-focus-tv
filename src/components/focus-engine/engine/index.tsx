@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import { onEventKeyDown } from '../path/untils'
 import { EngineStore, defStoreData } from "../store"
 import { TypeFocusStore } from "../store/index.d"
-import { switchFocus } from './algorithm'
-import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps } from './type'
+import { switchFocus, isInScrollId } from './algorithm'
+import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdList } from './type'
 import { EngineItem } from "./Item"
+import { cloneDeep } from 'lodash'
 
 
 const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
@@ -16,7 +17,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   /**焦点元素id列表 */
   const focusList = useRef<string[]>([])
   /**scroll元素id列表 */
-  const scrollList = useRef<{ id: string, cacheFocusId: string, list: string[] }[]>([])
+  const scrollList = useRef<TypeScrollIdList>([])
   function setStore(defVal: TypeFocusStore.TypeDefStoreData = refStoreValue.current) {
     if (!focusList.current.find(v => v === defVal.id)) {
       console.error(`setDefWidget:未找到此元素id=${defVal.id}`)
@@ -37,15 +38,20 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     if (_index >= 0) focusList.current.splice(_index, 1)
   }
   /**子组件中有scroll创建或者销毁了 */
-  function scrollEleChange(p: { id: string, cacheFocusId: string, list: string[] }, type: "create" | "destroy" = "create") {
+  function scrollEleChange(p: { id: string, list: string[], cacheFocusId?: string }, type: "create" | "destroy" = "create") {
+    const _list = cloneDeep(scrollList.current)
     if (type === "create") {
-      if (!scrollList.current.find(c => c.id === p.id)) {
-        scrollList.current.push(p)
+      const _idx = _list.findIndex(c => c.id === p.id)
+      if (_idx < 0) {
+        _list.push(p)
+      } else {
+        _list[_idx] = p
       }
     } else {
-      const _index = scrollList.current.findIndex(c => c.id === p.id)
-      if (_index >= 0) scrollList.current.splice(_index, 1)
+      const _index = _list.findIndex(c => c.id === p.id)
+      if (_index >= 0) _list.splice(_index, 1)
     }
+    scrollList.current = _list
   }
   /**设置当前选中项 */
   function setCurentId(_id: string) {
@@ -67,35 +73,17 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       setCurentId(focusId || focusList.current[0])
     }
   }, [focusList.current])
-  /**查找是否在scroll组件中，如果在组件中，则使用scroll组件中的缓存id，没有则返回当前id */
-  function isInScrollId(id: string) {
-    let _returnId
-    for (let pidx = 0; pidx < scrollList.current.length; pidx++) {
-      const pval = scrollList.current[pidx];
-      let _isInThisScroll = false
-      for (let i = 0; i < pval.list.length; i++) {
-        const v = pval.list[i];
-        if (v === id) {
-          _returnId = pval.cacheFocusId;
-          _isInThisScroll = true
-          continue;
-        }
-      }
-      if (_isInThisScroll) continue;
-    }
-    return _returnId
-  }
   useEffect(function () {
     onEventKeyDown(function (ev) {
       if (listenerKeydown === false) return
       const moveFn = switchFocus[ev as keyof TypeswitchFocus]
       let _id = refStoreValue.current.id
       if ((moveFn instanceof Function) && refStoreValue.current.id) {
-        const _nextItemId = moveFn(refStoreValue.current.id, focusList.current)
+        const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, scrollList.current)
         if (!_nextItemId) return
-        const _catcheScrollId = isInScrollId(_nextItemId)
+        const _catcheScrollId = isInScrollId(_nextItemId, scrollList.current)
         //如果当前聚焦元素也是scroll中的元素
-        if (isInScrollId(refStoreValue.current.id) === _catcheScrollId) {
+        if (isInScrollId(refStoreValue.current.id, scrollList.current) === _catcheScrollId) {
           _id = _nextItemId
         } else {
           _id = _catcheScrollId ?? _nextItemId

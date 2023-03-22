@@ -1,4 +1,5 @@
-type TypeswitchFocusFun = (id: string, _list: string[]) => string | null | undefined
+type TypeswitchFocusFun = (id: string, _list: string[], scrollList: TypeScrollIdList) => string | null | undefined
+export type TypeScrollIdList = { id: string, cacheFocusId?: string, list: string[] }[]
 export type TypeswitchFocus = {
   "RIGHT": TypeswitchFocusFun,
   "LEFT": TypeswitchFocusFun,

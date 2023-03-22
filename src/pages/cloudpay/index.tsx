@@ -31,7 +31,8 @@ export default function MyPage() {
           <FocusEngine.Item className='index-item'>10</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>11</FocusEngine.Item>
         </FocusScroll>
-        <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "50px" }}>
+        {/* <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}> */}
+        <FocusScroll cacheFocus scrollOrientation='x' className='scrollx'>
           <FocusEngine.Item className='index-item'>6</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>7</FocusEngine.Item>
           <FocusEngine.Item className='index-item'>8</FocusEngine.Item>
