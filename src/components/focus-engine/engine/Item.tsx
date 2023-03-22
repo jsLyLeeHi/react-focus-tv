@@ -7,6 +7,7 @@ import "./index.less"
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
+  const { renderProps, onInput, ...restProps } = props
   const widgetId = useRef(props.id || getUUid())
   const EngineStoreCtx = useContext(EngineStore)
   useEffect(() => {
@@ -31,8 +32,8 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       if ((props.onClick instanceof Function) && _keyValue === "ENTER") {
         props.onClick(ev)
       }
-      if ((props.onInput instanceof Function) && _keyValue !== "ENTER") {
-        props.onInput(_keyValue)
+      if ((onInput instanceof Function) && _keyValue !== "ENTER") {
+        onInput(_keyValue)
       }
     }
     window.addEventListener("keydown", onItemKeyDown)
@@ -40,18 +41,20 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       window.removeEventListener("keydown", onItemKeyDown)
     }
   }, [EngineStoreCtx.value.id])
-  function getClassName(_focus: boolean, c?: string) {
+  function getClassName(_focus: boolean, _isselected: boolean, c?: string) {
     let _class = _focus ? "widget-focus" : "widget-unfocus"
+    _class = `${_class} ${_isselected ? "widget-selected" : "widget-unselected"}`
     if (!c) return _class
     _class = c + " " + _class
     return _class + " focus-item"
   }
   const _isfocus = EngineStoreCtx.value.id === widgetId.current
-  return <div {...props} id={widgetId.current}
-    className={getClassName(_isfocus, props.className)}
-    children={(props.renderProps instanceof Function) ? props.renderProps({
-      isfocus: _isfocus,
+  const _isselected = !!EngineStoreCtx.scrollList.find(v => v.cacheFocusId === widgetId.current)
+  return <div {...restProps} id={widgetId.current}
+    className={getClassName(_isfocus, _isselected, props.className)}
+    children={(renderProps instanceof Function) ? renderProps({
+      isFocus: _isfocus,
+      isSelected: _isselected,
       id: widgetId.current,
-      store: EngineStoreCtx.value
     }) : props.children}></div>
 }

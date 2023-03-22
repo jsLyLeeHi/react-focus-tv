@@ -1,4 +1,4 @@
-import { TypeswitchFocus, TypeScrollIdList } from "./type"
+import { TypeswitchFocus, TypeScrollIdItem } from "./type"
 
 
 
@@ -28,7 +28,7 @@ type Direction = "RIGHT" | "LEFT" | "UP" | "DOWN";
  * @param direction 要查找的方向，必须是 "RIGHT"、"LEFT"、"UP" 或 "DOWN" 中的一个。
  * @returns 距离当前元素指定方向最近的元素的id，如果找不到，则返回 null。
  */
-function getNearestElementId(currentElementId: string, allElementsIdList: string[], scrollList: TypeScrollIdList, direction: Direction): string | null {
+function getNearestElementId(currentElementId: string, allElementsIdList: string[], scrollList: TypeScrollIdItem[], direction: Direction): string | null {
   // 获取当前元素的DOM元素节点和位置信息
   const currentElement = document.getElementById(currentElementId) as HTMLElement;
   const currentElementRect = currentElement.getBoundingClientRect();
@@ -98,7 +98,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
 }
 
 /**查找元素是否在scroll的可是区域内 */
-function isVisualInScroll(idList: TypeScrollIdList, ele: HTMLElement) {
+function isVisualInScroll(idList: TypeScrollIdItem[], ele: HTMLElement) {
   let isVisual = true
   for (let i = 0; i < idList.length; i++) {
     const val = idList[i];
@@ -122,7 +122,7 @@ function isVisualInScroll(idList: TypeScrollIdList, ele: HTMLElement) {
 }
 
 /**查找是否在scroll组件中，如果在组件中，则使用scroll组件中的缓存id，没有则返回当前id */
-export function isInScrollId(id: string, scrollList: TypeScrollIdList) {
+export function isInScrollId(id: string, scrollList: TypeScrollIdItem[]) {
   let _returnId
   for (let pidx = 0; pidx < scrollList.length; pidx++) {
     const pval = scrollList[pidx];

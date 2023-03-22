@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useRef } from 'react'
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { getUUid } from '../path/untils';
 import { EngineStore } from "../store"
 import { scrollTo } from "./data"
@@ -19,7 +19,7 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   const widgetId = useRef(props.id || getUUid())
   const { scrollOrientation, cacheFocus, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)
-  const cacheFocusId = useRef<string>()
+  const [cacheFocusId, setCacheFocusId] = useState<string>()
   const EngineStoreCtx = useContext(EngineStore)
   function findFocusList() {
     const _list: string[] = EngineStoreCtx.focusList.filter(v => {
@@ -32,11 +32,15 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
     const _foucsItemList = findFocusList()
-    EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId.current, list: _foucsItemList })
-    return () => {
-      EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId.current, list: _foucsItemList }, "destroy")
+    if (!cacheFocusId) {
+      setCacheFocusId(_foucsItemList[0])
     }
-  }, [cacheFocusId.current, props.children])
+
+    EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId, list: _foucsItemList })
+    return () => {
+      EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId, list: _foucsItemList }, "destroy")
+    }
+  }, [cacheFocusId, props.children])
   useEffect(() => {
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return
@@ -44,7 +48,7 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
     if (!targetEl) return
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
-    cacheFocusId.current = EngineStoreCtx.value.id
+    setCacheFocusId(EngineStoreCtx.value.id)
     if (scrollOrientation === "x") {
       try {
         const _parW = parentRef.current.getBoundingClientRect().width,
@@ -67,7 +71,7 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
       } catch (error) {
 
       }
-    } else {
+    } else if (scrollOrientation === "y") {
       try {
         const _parH = parentRef.current.getBoundingClientRect().height,
           _domH = targetEl.getBoundingClientRect().height,
