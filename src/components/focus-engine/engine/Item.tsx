@@ -7,13 +7,16 @@ import "./index.less"
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
-  const { renderProps, onInput, rightGo = [], ...restProps } = props
+  const { renderProps, onInput, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
   const widgetId = useRef(props.id || getUUid())
   const EngineStoreCtx = useContext(EngineStore)
   useEffect(() => {
     EngineStoreCtx.widgetCreate({
       id: widgetId.current,
       rightGo,
+      leftGo,
+      upGo,
+      downGo,
     })
     return () => {
       EngineStoreCtx.widgetDestroy({ id: widgetId.current })

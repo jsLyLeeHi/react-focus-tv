@@ -1,5 +1,11 @@
 import { TypeKeyCode } from "../key_iptv";
-export type TypeFocusItem={ id: string, rightGo: string[] }
+export type TypeFocusItem = {
+  id: string,
+  rightGo: string[]
+  leftGo: string[],
+  upGo: string[],
+  downGo: string[],
+}
 type TypeswitchFocusFun = (id: string, _list: TypeFocusItem[], scrollList: TypeScrollIdItem[]) => string | null | undefined
 export type TypeScrollIdItem = { id: string, cacheFocusId?: string, list: TypeFocusItem[] }
 export type TypeswitchFocus = {
@@ -29,6 +35,9 @@ export type FocusEngineItemProps = {
   //初始化聚焦优先级 0最高
   priority?: number,
   rightGo?: string[],
+  leftGo?: string[],
+  upGo?: string[],
+  downGo?: string[],
   onInput?: (ev: TypeKeyCode) => void,
   renderProps?: (params: TypeRenderItem) => JSX.Element
 } & React.HTMLAttributes<HTMLDivElement>;

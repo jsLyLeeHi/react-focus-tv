@@ -5,9 +5,9 @@ export default function MyPage() {
   return (
     <>
       <FocusEngine className="index-box">
-        <FocusEngine.Item className='index-item' rightGo={["s1", "s2"]}>222</FocusEngine.Item>
+        <FocusEngine.Item className='index-item'>222</FocusEngine.Item>
         <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
-          <FocusEngine.Item className='index-item' id='s1' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
+          <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>

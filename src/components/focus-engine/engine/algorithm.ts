@@ -20,6 +20,14 @@ export const switchFocus: TypeswitchFocus = {
 }
 
 type Direction = "RIGHT" | "LEFT" | "UP" | "DOWN";
+interface TypeDistanceItem {
+  id: string,
+  distance: number,
+  isScrollVisual: boolean,
+  isgoto: boolean,
+  isSameDirection: boolean,
+  overlapArea: boolean,
+}
 
 /**
  * 获取距离当前元素指定方向最近的元素的id。
@@ -37,7 +45,11 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     y: currentElementRect.top + currentElementRect.height / 2,
   };
 
-  const distanceList: { id: string, distance: number, isScrollVisual: boolean, isSameDirection: boolean, overlapArea: boolean, }[] = []
+  const distanceList: TypeDistanceItem[] = []
+  const rightGo = allElementsIdList.find(v => v.id === currentElementId)?.rightGo || []
+  const leftGo = allElementsIdList.find(v => v.id === currentElementId)?.leftGo || []
+  const upGo = allElementsIdList.find(v => v.id === currentElementId)?.upGo || []
+  const downGo = allElementsIdList.find(v => v.id === currentElementId)?.downGo || []
   // 遍历所有元素的id列表
   for (const item of allElementsIdList) {
     // 获取当前元素的DOM元素节点和位置信息
@@ -54,23 +66,28 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     let overlapArea = false;
     // 检查元素是否在scroll中可视
     let isScrollVisual = isVisualInScroll(scrollList, element);
-
+    //是否优先跳转,如果标记了多个优先跳转，则优先跳转距离最近的元素，这里是考虑焦点元素可能在页面上消失
+    let isgoto = false
     switch (direction) {
       case "RIGHT":
         isSameDirection = elementCenter.x > currentElementCenter.x;
         overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
+        isgoto = !!rightGo.find(v => v === item.id)
         break;
       case "LEFT":
         isSameDirection = elementCenter.x < currentElementCenter.x;
         overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
+        isgoto = !!leftGo.find(v => v === item.id)
         break;
       case "UP":
         isSameDirection = elementCenter.y < currentElementCenter.y;
         overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
+        isgoto = !!upGo.find(v => v === item.id)
         break;
       case "DOWN":
         isSameDirection = elementCenter.y > currentElementCenter.y;
         overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
+        isgoto = !!downGo.find(v => v === item.id)
         break;
     }
     // 计算当前元素与每个元素之间的距离
@@ -80,18 +97,23 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
       distance,
       isScrollVisual,
       isSameDirection,
-      overlapArea
+      overlapArea,
+      isgoto
     })
   }
-  //查找移动方向上的scroll可视区域内的元素
-  const isScrollVisualList = distanceList.filter(v => v.isScrollVisual)
-  //查找移动方向上的焦点元素
-  const isSameDirectionList = isScrollVisualList.filter(v => v.isSameDirection && (v.id !== currentElementId))
+  //过滤调当前选中的焦点元素和在scroll中不可视的焦点元素并且元素在指定方向上
+  const flutterList = distanceList.filter(v => v.isScrollVisual && v.isSameDirection && (v.id !== currentElementId))
   //查找出移动方向上与当前元素坐标方向上有面积重合的焦点元素
-  const overlapAreaList = isSameDirectionList.filter(v => v.overlapArea)
-  //优先使用面积重合的元素
-  const _list = overlapAreaList.length > 0 ? overlapAreaList : isSameDirectionList
-
+  const overlapAreaList = flutterList.filter(v => v.overlapArea)
+  //查找出优先跳转的元素
+  const isgotoList = flutterList.filter(v => v.isgoto)
+  //将焦点元素的距离从小到大排序
+  let _list: TypeDistanceItem[] = flutterList
+  if (isgotoList.length > 0) {
+    _list = isgotoList
+  } else if (overlapAreaList.length > 0) {
+    _list = overlapAreaList
+  }
   // 初始化距离和最近元素的变量
   const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
   return minDistanceElement?.id;
