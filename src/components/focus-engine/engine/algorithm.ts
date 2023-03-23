@@ -107,7 +107,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
   const overlapAreaList = flutterList.filter(v => v.overlapArea)
   //查找出优先跳转的元素
   const isgotoList = flutterList.filter(v => v.isgoto)
-  
+
   let _list: TypeDistanceItem[] = flutterList
   if (isgotoList.length > 0) {
     _list = isgotoList
@@ -116,7 +116,16 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
   }
   // 初始化距离和最近元素的变量
   const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
-  return minDistanceElement?.id;
+  //查找scroll中的缓存焦点元素的id,
+  let _id = currentElementId
+  const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)
+  //如果当前聚焦元素也是scroll中的元素
+  if (isInScrollId(currentElementId, scrollList) === _catcheScrollId) {
+    _id = minDistanceElement?.id
+  } else {
+    _id = _catcheScrollId ?? minDistanceElement?.id
+  }
+  return _id
 }
 
 /**查找元素是否在scroll的可是区域内 */

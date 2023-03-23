@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { EngineStore, defStoreData } from "../store"
 import { TypeFocusStore } from "../store/index.d"
-import { switchFocus, isInScrollId } from './algorithm'
+import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from './type'
 import { EngineItem } from "./Item"
 import { cloneDeep } from 'lodash'
@@ -101,13 +101,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       if ((moveFn instanceof Function) && refStoreValue.current.id) {
         const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, refScrollList.current)
         if (!_nextItemId) return
-        const _catcheScrollId = isInScrollId(_nextItemId, refScrollList.current)
-        //如果当前聚焦元素也是scroll中的元素
-        if (isInScrollId(refStoreValue.current.id, refScrollList.current) === _catcheScrollId) {
-          _id = _nextItemId
-        } else {
-          _id = _catcheScrollId ?? _nextItemId
-        }
+        _id = _nextItemId
       }
       setStore({
         ...refStoreValue.current,

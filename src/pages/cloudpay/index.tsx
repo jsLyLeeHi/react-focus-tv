@@ -6,7 +6,7 @@ export default function MyPage() {
     <>
       <FocusEngine className="index-box">
         <FocusEngine.Item className='index-item'>222</FocusEngine.Item>
-        <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
+        <FocusScroll scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
@@ -24,8 +24,8 @@ export default function MyPage() {
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
         </FocusScroll>
-        <FocusScroll cacheFocus scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
-          {/* <FocusScroll cacheFocus scrollOrientation='x' className='scrollx'> */}
+        <FocusScroll scrollOrientation='y' style={{ height: "300px", marginTop: "100px" }}>
+          {/* <FocusScroll scrollOrientation='x' className='scrollx'> */}
           <FocusEngine.Item className='index-item' id='s2' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
           <FocusEngine.Item className='index-item' renderProps={(p) => <div>{p.isSelected ? "1" : "2"}</div>}></FocusEngine.Item>
