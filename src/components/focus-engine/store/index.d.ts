@@ -7,5 +7,6 @@ export namespace TypeFocusStore {
   }
   interface TypeWidgetParams {
     id: string,
+    rightGo: string[]
   }
 }

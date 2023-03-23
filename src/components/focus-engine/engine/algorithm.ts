@@ -1,4 +1,4 @@
-import { TypeswitchFocus, TypeScrollIdItem } from "./type"
+import { TypeswitchFocus, TypeScrollIdItem, TypeFocusItem } from "./type"
 
 
 
@@ -28,7 +28,7 @@ type Direction = "RIGHT" | "LEFT" | "UP" | "DOWN";
  * @param direction 要查找的方向，必须是 "RIGHT"、"LEFT"、"UP" 或 "DOWN" 中的一个。
  * @returns 距离当前元素指定方向最近的元素的id，如果找不到，则返回 null。
  */
-function getNearestElementId(currentElementId: string, allElementsIdList: string[], scrollList: TypeScrollIdItem[], direction: Direction): string | null {
+function getNearestElementId(currentElementId: string, allElementsIdList: TypeFocusItem[], scrollList: TypeScrollIdItem[], direction: Direction): string | null {
   // 获取当前元素的DOM元素节点和位置信息
   const currentElement = document.getElementById(currentElementId) as HTMLElement;
   const currentElementRect = currentElement.getBoundingClientRect();
@@ -39,9 +39,9 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
 
   const distanceList: { id: string, distance: number, isScrollVisual: boolean, isSameDirection: boolean, overlapArea: boolean, }[] = []
   // 遍历所有元素的id列表
-  for (const id of allElementsIdList) {
+  for (const item of allElementsIdList) {
     // 获取当前元素的DOM元素节点和位置信息
-    const element = document.getElementById(id) as HTMLElement;
+    const element = document.getElementById(item.id) as HTMLElement;
     const elementRect = element.getBoundingClientRect();
     const elementCenter = {
       x: elementRect.left + elementRect.width / 2,
@@ -76,7 +76,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: string
     // 计算当前元素与每个元素之间的距离
     const distance = Math.sqrt(Math.pow(elementCenter.x - currentElementCenter.x, 2) + Math.pow(elementCenter.y - currentElementCenter.y, 2));
     distanceList.push({
-      id,
+      id: item.id,
       distance,
       isScrollVisual,
       isSameDirection,
@@ -129,7 +129,7 @@ export function isInScrollId(id: string, scrollList: TypeScrollIdItem[]) {
     let _isInThisScroll = false
     for (let i = 0; i < pval.list.length; i++) {
       const v = pval.list[i];
-      if (v === id) {
+      if (v.id === id) {
         _returnId = pval.cacheFocusId;
         _isInThisScroll = true
         continue;

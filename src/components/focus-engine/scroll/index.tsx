@@ -2,6 +2,7 @@ import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react
 import { getUUid } from '../path/untils';
 import { EngineStore } from "../store"
 import { scrollTo } from "./data"
+import { TypeFocusItem } from "../engine/type"
 import "./index.less"
 
 
@@ -22,9 +23,9 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   const [cacheFocusId, setCacheFocusId] = useState<string>()
   const EngineStoreCtx = useContext(EngineStore)
   function findFocusList() {
-    const _list: string[] = EngineStoreCtx.focusList.filter(v => {
+    const _list: TypeFocusItem[] = EngineStoreCtx.focusList.filter(v => {
       if (!parentRef.current) return
-      const ele = document.getElementById(v) as HTMLElement;
+      const ele = document.getElementById(v.id) as HTMLElement;
       return parentRef.current.contains(ele)
     })
     return _list
@@ -32,15 +33,14 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
     const _foucsItemList = findFocusList()
-    if (!cacheFocusId) {
-      setCacheFocusId(_foucsItemList[0])
-    }
-
-    EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId, list: _foucsItemList })
+    /**如果元素内部没有焦点元素，则不需要上报给主组件 */
+    if (!_foucsItemList[0]) return
+    if (!cacheFocusId) setCacheFocusId(_foucsItemList[0].id)
+    EngineStoreCtx.scrollEleCreate({ id: widgetId.current, cacheFocusId: cacheFocusId, list: _foucsItemList })
     return () => {
-      EngineStoreCtx.scrollEleChange({ id: widgetId.current, cacheFocusId: cacheFocusId, list: _foucsItemList }, "destroy")
+      EngineStoreCtx.scrollEleDestroy({ id: widgetId.current })
     }
-  }, [cacheFocusId, props.children])
+  }, [cacheFocusId, EngineStoreCtx.focusList])
   useEffect(() => {
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return

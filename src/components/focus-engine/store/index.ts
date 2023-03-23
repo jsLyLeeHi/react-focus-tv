@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { TypeFocusStore } from "./index.d"
-import { TypeScrollIdItem } from "../engine/type"
+import { TypeScrollIdItem, TypeFocusItem } from "../engine/type"
 
 export const defStoreData: TypeFocusStore.TypeDefStoreData = {
   id: "",
@@ -8,19 +8,21 @@ export const defStoreData: TypeFocusStore.TypeDefStoreData = {
 }
 export const EngineStore = createContext<{
   value: TypeFocusStore.TypeDefStoreData,
-  focusList: string[],
+  focusList: TypeFocusItem[],
   scrollList: TypeScrollIdItem[],
   widgetCreate: (p: TypeFocusStore.TypeWidgetParams) => void
-  scrollEleChange: (p: TypeScrollIdItem, type?: "create" | "destroy") => void
-  widgetDestroy: (p: TypeFocusStore.TypeWidgetParams) => void
+  widgetDestroy: (p: { id: string }) => void
+  scrollEleCreate: (p: TypeScrollIdItem) => void
+  scrollEleDestroy: (p: { id: string }) => void
   setCurentId: (p: string) => void
 }>({
   value: defStoreData,
   focusList: [],
   scrollList: [],
   widgetCreate: () => { },
-  scrollEleChange: () => { },
   widgetDestroy: () => { },
+  scrollEleCreate: () => { },
+  scrollEleDestroy: () => { },
   setCurentId: () => { },
 });
 
