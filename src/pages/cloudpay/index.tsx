@@ -9,29 +9,13 @@ export default function MyPage() {
   const [selectProduct, setSelectProduct] = useState(produstList[0])
   const [selectIdList, setSelectIdList] = useState<{ productName: string, selectId: string }[]>([])
   useEffect(() => {
-    setSelectIdList(datalist.map(val => {
-      const _item = val.itemList[0]
-      return {
-        productName: _item.productName,
-        selectId: _item.itemId
-      }
-    }))
+    setSelectIdList(datalist.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
   }, [])
-
   function onItemFocus(val: any) {
     const _list = cloneDeep(selectIdList)
     const _idx = _list.findIndex(val => val.productName == selectProduct.productName)
-    if (_idx >= 0) {
-      _list[_idx] = {
-        productName: val.productName,
-        selectId: val.itemId
-      }
-    } else {
-      _list.push({
-        productName: val.productName,
-        selectId: val.itemId
-      })
-    }
+    if (_idx < 0) return
+    _list[_idx] = { productName: val.productName, selectId: val.itemId }
     setSelectIdList(_list)
   }
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
