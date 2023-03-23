@@ -20,7 +20,7 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   const widgetId = useRef(props.id || getUUid())
   const { scrollOrientation, selectId, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)
-  const [cacheFocusId, setCacheFocusId] = useState<string | undefined>(selectId)
+  const [cacheFocusId, setCacheFocusId] = useState<string | undefined>()
   const EngineStoreCtx = useContext(EngineStore)
   function findFocusList() {
     const _list: TypeFocusItem[] = EngineStoreCtx.focusList.filter(v => {
@@ -30,6 +30,11 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
     })
     return _list
   }
+  useEffect(() => {
+    if (cacheFocusId) {
+      setCacheFocusId(selectId)
+    }
+  }, [selectId])
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
     const _foucsItemList = findFocusList()

@@ -21,7 +21,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   const focusList = useRef<TypeFocusItem[]>([])
   function setStore(defVal: TypeFocusStore.TypeDefStoreData = refStoreValue.current) {
     if (!focusList.current.find(v => v.id === defVal.id)) {
-      console.error(`setDefWidget:未找到此元素id=${defVal.id}`)
+      console.error(`setStore:未找到此元素id=${defVal.id}`)
       return
     }
     refStoreValue.current = { ...(defVal || refStoreValue.current) }
