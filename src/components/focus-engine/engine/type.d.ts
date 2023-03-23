@@ -32,8 +32,6 @@ type TypeRenderItem = {
   id: string,
 }
 export type FocusEngineItemProps = {
-  //初始化聚焦优先级 0最高
-  priority?: number,
   rightGo?: string[],
   leftGo?: string[],
   upGo?: string[],

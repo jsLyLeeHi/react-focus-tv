@@ -13,14 +13,14 @@ type FocusEngineItemProps = {
   /**距离边缘的距离 */
   offsetDistance?: number | "center",
   /**缓存的焦点元素id */
-  focusId?: string
+  selectId?: string
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const Scroll: React.FC<FocusEngineItemProps> = (props) => {
   const widgetId = useRef(props.id || getUUid())
-  const { scrollOrientation, focusId, offsetDistance = "center", ...restProps } = props;
+  const { scrollOrientation, selectId, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)
-  const [cacheFocusId, setCacheFocusId] = useState<string | undefined>(focusId)
+  const [cacheFocusId, setCacheFocusId] = useState<string | undefined>(selectId)
   const EngineStoreCtx = useContext(EngineStore)
   function findFocusList() {
     const _list: TypeFocusItem[] = EngineStoreCtx.focusList.filter(v => {
