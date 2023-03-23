@@ -107,7 +107,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
   const overlapAreaList = flutterList.filter(v => v.overlapArea)
   //查找出优先跳转的元素
   const isgotoList = flutterList.filter(v => v.isgoto)
-  //将焦点元素的距离从小到大排序
+  
   let _list: TypeDistanceItem[] = flutterList
   if (isgotoList.length > 0) {
     _list = isgotoList
