@@ -1,6 +1,6 @@
 import { FocusEngine, FocusScroll } from '@/components/focus-engine';
 import { cloneDeep } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { produstList } from "./data"
 import "./index.less"
 
@@ -8,6 +8,15 @@ export default function MyPage() {
   const [datalist] = useState(produstList)
   const [selectProduct, setSelectProduct] = useState(produstList[0])
   const [selectIdList, setSelectIdList] = useState<{ productName: string, selectId: string }[]>([])
+  useEffect(() => {
+    setSelectIdList(datalist.map(val => {
+      const _item = val.itemList[0]
+      return {
+        productName: _item.productName,
+        selectId: _item.itemId
+      }
+    }))
+  }, [])
 
   function onItemFocus(val: any) {
     const _list = cloneDeep(selectIdList)
@@ -26,8 +35,6 @@ export default function MyPage() {
     setSelectIdList(_list)
   }
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
-  console.log(selectIdList, datalist);
-
   return (
     <>
       <FocusEngine className="index-box">
@@ -37,8 +44,8 @@ export default function MyPage() {
           ))}
         </FocusScroll>
         <FocusScroll scrollOrientation='y' selectId={selectIdItem?.selectId}>
-          {selectProduct.itemList.map((val, idx) => (
-            <FocusEngine.Item key={idx} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.productName}</FocusEngine.Item>
+          {selectProduct.itemList.map(val => (
+            <FocusEngine.Item key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
       </FocusEngine>
