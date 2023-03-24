@@ -21,7 +21,7 @@ export default function MyPage() {
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
   return (
     <>
-      <FocusEngine className="index-box">
+      <FocusEngine className="index-box" focusId={datalist[0].itemList[0].itemId}>
         <FocusScroll className='left-scroll' scrollOrientation='y'>
           {datalist.map((val, idx) => (
             <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
