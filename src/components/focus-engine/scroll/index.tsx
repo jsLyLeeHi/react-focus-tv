@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { getUUid } from '../path/untils';
 import { EngineStore } from "../store"
-import { scrollTo } from "./data"
+import { scrollToByEle } from "./data"
 import { TypeFocusItem } from "../engine/type"
 import "./index.less"
 
@@ -31,9 +31,21 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
     return _list
   }
   useEffect(() => {
-    if (cacheFocusId) {
+    if (cacheFocusId && selectId !== cacheFocusId) {
       setCacheFocusId(selectId)
     }
+    if (!parentRef.current) return
+    if (!selectId) return
+    const targetEl = document.getElementById(selectId) as HTMLElement;
+    if (!targetEl) return
+    //如果该元素没有在当前的scroll内，则不继续执行
+    if (!parentRef.current.contains(targetEl)) return
+    scrollToByEle({
+      ele: targetEl,
+      scrollOrientation,
+      offsetDistance,
+      parentRef
+    })
   }, [selectId])
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
@@ -54,51 +66,12 @@ const Scroll: React.FC<FocusEngineItemProps> = (props) => {
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
     setCacheFocusId(EngineStoreCtx.value.id)
-    if (scrollOrientation === "x") {
-      try {
-        const _parW = parentRef.current.getBoundingClientRect().width,
-          _domW = targetEl.getBoundingClientRect().width,
-          /**元素距离父元素顶部的距离 */
-          _domScrollLeft = targetEl.offsetLeft - parentRef.current.offsetLeft;
-        if (offsetDistance === "center") {
-          scrollTo({
-            num: _domScrollLeft - (_parW / 2 - _domW / 2),
-            scrollOrientation,
-            parentRef
-          })
-        } else {
-          scrollTo({
-            num: _domScrollLeft - offsetDistance,
-            scrollOrientation,
-            parentRef
-          })
-        }
-      } catch (error) {
-
-      }
-    } else if (scrollOrientation === "y") {
-      try {
-        const _parH = parentRef.current.getBoundingClientRect().height,
-          _domH = targetEl.getBoundingClientRect().height,
-          /**元素距离父元素顶部的距离 */
-          _domScrollTop = targetEl.offsetTop - parentRef.current.offsetTop;
-        if (offsetDistance === "center") {
-          scrollTo({
-            num: _domScrollTop - (_parH / 2 - _domH / 2),
-            scrollOrientation,
-            parentRef
-          })
-        } else {
-          scrollTo({
-            num: _domScrollTop - offsetDistance,
-            scrollOrientation,
-            parentRef
-          })
-        }
-      } catch (error) {
-
-      }
-    }
+    scrollToByEle({
+      ele: targetEl,
+      scrollOrientation,
+      offsetDistance,
+      parentRef
+    })
   }, [EngineStoreCtx.value.id])
   return <div ref={parentRef} {...restProps} id={widgetId.current}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>

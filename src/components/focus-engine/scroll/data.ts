@@ -36,3 +36,60 @@ export function scrollTo(params: TypeScrollToParams) {
     }
   }, interval)
 }
+
+
+export function scrollToByEle(params: {
+  ele: HTMLElement,
+  scrollOrientation: "x" | "y",
+  offsetDistance: number | "center"
+  parentRef: React.RefObject<HTMLDivElement>
+}) {
+  if (!params.ele) return
+  //如果该元素没有在当前的scroll内，则不继续执行
+  if (!params.parentRef.current?.contains(params.ele)) return
+  if (params.scrollOrientation === "x") {
+    try {
+      const _parW = params.parentRef.current.getBoundingClientRect().width,
+        _domW = params.ele.getBoundingClientRect().width,
+        /**元素距离父元素顶部的距离 */
+        _domScrollLeft = params.ele.offsetLeft - params.parentRef.current.offsetLeft;
+      if (params.offsetDistance === "center") {
+        scrollTo({
+          num: _domScrollLeft - (_parW / 2 - _domW / 2),
+          scrollOrientation: params.scrollOrientation,
+          parentRef:params.parentRef
+        })
+      } else {
+        scrollTo({
+          num: _domScrollLeft - params.offsetDistance,
+          scrollOrientation: params.scrollOrientation,
+          parentRef:params.parentRef
+        })
+      }
+    } catch (error) {
+
+    }
+  } else if (params.scrollOrientation === "y") {
+    try {
+      const _parH = params.parentRef.current.getBoundingClientRect().height,
+        _domH = params.ele.getBoundingClientRect().height,
+        /**元素距离父元素顶部的距离 */
+        _domScrollTop = params.ele.offsetTop - params.parentRef.current.offsetTop;
+      if (params.offsetDistance === "center") {
+        scrollTo({
+          num: _domScrollTop - (_parH / 2 - _domH / 2),
+          scrollOrientation: params.scrollOrientation,
+          parentRef:params.parentRef
+        })
+      } else {
+        scrollTo({
+          num: _domScrollTop - params.offsetDistance,
+          scrollOrientation: params.scrollOrientation,
+          parentRef:params.parentRef
+        })
+      }
+    } catch (error) {
+
+    }
+  }
+}
