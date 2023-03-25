@@ -6,7 +6,7 @@ import { TypeFocusItem } from "../engine/type"
 import "./index.less"
 
 
-type FocusEngineItemProps = {
+type TypeScrollProps = {
   children: ReactNode;
   /**滚动轴方向 */
   scrollOrientation: "x" | "y",
@@ -16,7 +16,7 @@ type FocusEngineItemProps = {
   selectId?: string
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const Scroll: React.FC<FocusEngineItemProps> = (props) => {
+const Scroll: React.FC<TypeScrollProps> = (props) => {
   const widgetId = useRef(props.id || getUUid())
   const { scrollOrientation, selectId, offsetDistance = "center", ...restProps } = props;
   const parentRef = useRef<HTMLDivElement>(null)

@@ -17,9 +17,12 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   const refScrollList = useRef<TypeScrollIdItem[]>([])
   /**首次进入组件 */
   const firstIn = useRef<boolean>(true)
+  /**首次进入组件 */
+  const isKeydown = useRef<boolean | undefined>()
   /**焦点元素id列表 */
   const focusList = useRef<TypeFocusItem[]>([])
   function setStore(defVal: TypeFocusStore.TypeDefStoreData = refStoreValue.current) {
+    if(!defVal.id) return
     if (!focusList.current.find(v => v.id === defVal.id)) {
       console.error(`setStore:未找到此元素id=${defVal.id}`)
       return
@@ -76,19 +79,22 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     }
     firstIn.current = false
   }, [focusId])
+  useEffect(() => {
+    isKeydown.current = listenerKeydown
+  }, [listenerKeydown])
   //初始化当前选中项
   useEffect(() => {
     if (!storeValue.id) {
-      setCurentId(focusId || focusList.current[0].id)
+      setCurentId(focusId || focusList.current[0]?.id)
     }
   }, [focusList.current])
   useEffect(function () {
     /**按键按下 */
     function onKeyDown(e: KeyboardEvent) {
+      //如果设置不监听按键，则不继续执行
+      if (isKeydown.current === false) return
       const _keyValue = onKeyDownIntercept(e)
       if (!_keyValue) return
-      //如果设置不监听按键，则不继续执行
-      if (listenerKeydown === false) return
       if (_keyValue === "BACK" && (onBack instanceof Function)) {
         onBack()
         return
@@ -118,6 +124,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     value: storeValue,
     focusList: focusList.current,
     scrollList,
+    listenerKeydown,
     widgetCreate,
     widgetDestroy,
     setCurentId,
