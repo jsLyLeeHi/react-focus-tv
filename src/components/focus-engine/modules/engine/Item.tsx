@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useContext } from 'react'
-import { getUUid } from '../path/untils'
-import { EngineStore } from "../store/engine"
-import { keyByIptv } from "../key_iptv";
+import { getUUid } from '../../path/untils'
+import { EngineStore } from "../../store/engine"
+import { keyByIptv } from "../../key_iptv";
 import { FocusEngineItemProps } from "./type"
 import "./index.less"
 

@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
-import { getUUid } from '../path/untils';
-import { EngineStore } from "../store/engine"
+import { getUUid } from '../../path/untils';
+import { EngineStore } from "../../store/engine"
 import { scrollToByEle } from "./data"
 import { TypeFocusItem } from "../engine/type"
 import "./index.less"

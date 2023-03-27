@@ -1,4 +1,4 @@
-import { config } from "../path/config"
+import { config } from "../../path/config"
 const timer: { current?: number } = {}
 interface TypeScrollToParams {
   num: number,

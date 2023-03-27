@@ -1,11 +1,7 @@
 
 /**焦点引擎 */
-export { default as FocusEngine } from './engine'
+export { default as FocusEngine } from './modules/engine'
 /**焦点滚动条 */
-export { default as FocusScroll } from './scroll'
-/**焦点滚动条 */
-export { default as FocusPage } from './focus-page'
-/**焦点弹窗 */
-export { default as useFocusPopup } from './popup'
+export { default as FocusScroll } from './modules/scroll'
 /** */
 export { default as key_iptv } from './key_iptv'
