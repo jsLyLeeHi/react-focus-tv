@@ -1,15 +1,16 @@
-import { createContext, ReactNode } from 'react'
+import { createContext } from 'react'
 export interface TypeKeepStoreItem {
   cacheKey: string,
-  children: ReactNode
+  component:any
+  state: any
 }
 export interface TypeKeepStore {
-  storeInfo: TypeKeepStoreItem[],
+  storeInfoList: TypeKeepStoreItem[],
   setStoreInfo: (p: TypeKeepStoreItem) => void
 }
 
 export const defStoreData: TypeKeepStore = {
-  storeInfo: [],
+  storeInfoList: [],
   setStoreInfo: () => { },
 }
 export const KeepStore = createContext<TypeKeepStore>(defStoreData);
