@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { EngineStore, defStoreData } from "../../store/engine"
 import { TypeFocusStore } from "../../store/type-engine"
 import { switchFocus } from './algorithm'
-import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from './type'
-import { EngineItem } from "./Item"
+import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
+import { EngineItem } from "../engineItem"
 import { cloneDeep } from 'lodash'
 import { onKeyDownIntercept } from "../../path/untils"
 

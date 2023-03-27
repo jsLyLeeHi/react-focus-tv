@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { TypeFocusStore } from "./type-engine"
-import { TypeScrollIdItem, TypeFocusItem } from "../engine/type"
+import { TypeScrollIdItem, TypeFocusItem } from "../modules/type"
 
 export const defStoreData: TypeFocusStore.TypeDefStoreData = {
   id: "",

@@ -1,4 +1,4 @@
-import { TypeswitchFocus, TypeScrollIdItem, TypeFocusItem } from "./type"
+import { TypeswitchFocus, TypeScrollIdItem, TypeFocusItem } from "../type"
 
 
 
