@@ -17,7 +17,7 @@ interface RouteConfig {
 export const routeConfigs: RouteConfig[] = [
   {
     path: '/Cloudpay',
-    // keepAlive: true,
+    keepAlive: true,
     title: '首页',
     component: Cloudpay,
   },
