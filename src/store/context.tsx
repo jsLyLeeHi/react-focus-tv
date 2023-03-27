@@ -1,5 +1,5 @@
 import storage from "@/path/untils/storage"
-import { Context, ReactNode, useContext, useState, createContext } from 'react';
+import { ReactNode, useContext, useState, createContext } from 'react';
 import { cloneDeep } from "lodash"
 import { ContextProps, TypeAppData } from "./type"
 export const localKey = "localStorageAppData"

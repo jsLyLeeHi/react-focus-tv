@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { EngineStore } from "./store"
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
+import { KeepStore, TypeKeepStoreItem } from "./store"
 
 
 
-const Engine: React.FC & { Item: React.FC } = (props) => {
+const KeepAlive: React.FC<{ children: ReactNode }> & { Item: React.FC<{ children: ReactNode, cacheKey: string }> } = (props) => {
+  const [storeInfo, setStoreInfoList] = useState<TypeKeepStoreItem[]>([])
 
-  return (
-    <EngineStore.Provider value={{}}>
+  function setStoreInfo(params: TypeKeepStoreItem) {
 
-    </EngineStore.Provider>
-  );
+  }
+  return <KeepStore.Provider value={{ storeInfo, setStoreInfo }}>{props.children}</KeepStore.Provider>;
 };
-Engine.Item = () => {
-  return <></>
+KeepAlive.Item = (props) => {
+  return <>{props.children}</>
 };
 
 
-export const FocusEngine = Engine
-export default Engine
+export const RouterKeepAlive = KeepAlive
+export default KeepAlive
