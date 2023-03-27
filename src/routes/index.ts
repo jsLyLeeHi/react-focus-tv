@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import Cloudpay from "@/pages/cloudpay"
 import Items from "@/pages/items"
+import Pay from "@/pages/pay"
 import NotFound404 from "@/pages/404"
 
 
@@ -8,6 +9,7 @@ import NotFound404 from "@/pages/404"
 interface RouteConfig {
   path: string;
   title?: string;
+  keepAlive?: boolean,
   component: React.ComponentType<any>;
 }
 
@@ -15,6 +17,7 @@ interface RouteConfig {
 export const routeConfigs: RouteConfig[] = [
   {
     path: '/Cloudpay',
+    // keepAlive: true,
     title: '首页',
     component: Cloudpay,
   },
@@ -22,6 +25,11 @@ export const routeConfigs: RouteConfig[] = [
     path: '/Items',
     title: 'Items',
     component: Items,
+  },
+  {
+    path: '/Pay',
+    title: '支付页面',
+    component: Pay,
   },
   {
     path: '*',

@@ -53,3 +53,41 @@ import { FocusEngine, FocusScroll } from '@/components/focus-engine';
   <FocusEngine.Item></FocusEngine.Item>
 </FocusScroll>
 ```
+## 弹窗使用案例
+<!-- 
+页面中的FocusEngine需要根据弹窗的显隐设置是否监听键盘按键
+弹窗也同理
+ -->
+```tsx
+import { FocusEngine, FocusScroll } from '@/components/focus-engine';
+import { useState } from 'react';
+import { produstList } from "./data"
+import "./index.less"
+
+export default function MyPage() {
+  const [datalist] = useState(produstList)
+  const [showPopup, setShowPopup] = useState(false)
+
+  return (
+    <>
+      <FocusEngine className="index-box bg-black" listenerKeydown={!showPopup}>
+        <FocusScroll className='left-scroll' scrollOrientation='y'>
+          {datalist.map((val, idx) => (
+            <FocusEngine.Item className='box-item' key={idx} onClick={() => setShowPopup(true)}>{val.productName}</FocusEngine.Item>
+          ))}
+        </FocusScroll>
+      </FocusEngine>
+      {/* 弹窗 */}
+      <FocusEngine className="index-box focus-popup" hidden={!showPopup} listenerKeydown={showPopup}>
+        <FocusScroll className='left-scroll scroll1' scrollOrientation='y'>
+          {produstList.map((val, idx) => (
+            <FocusEngine.Item className='box-item' key={idx} onClick={() => {
+              setShowPopup(false)
+            }}>{val.productName}</FocusEngine.Item>
+          ))}
+        </FocusScroll>
+      </FocusEngine>
+    </>
+  );
+}
+```

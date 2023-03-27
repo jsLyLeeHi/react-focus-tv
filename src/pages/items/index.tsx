@@ -1,42 +1,53 @@
-import { useEffect, useState } from 'react'
-import { $tv } from 'react-tv-focusable';
-import './index.less'
+import { FocusEngine, FocusScroll } from '@/components/focus-engine';
+import { cloneDeep } from 'lodash';
+import { useEffect, useState } from 'react';
+import { produstList } from "./data"
+import { useNavigate } from 'react-router-dom';
+import "./index.less"
 
-
-function Index() {
-  const [dataList] = useState(new Array(20).fill(0))
+export default function MyPage() {
+  const navigate = useNavigate();
+  const [datalist] = useState(produstList)
+  const [selectProduct, setSelectProduct] = useState(produstList[0])
+  const [selectIdList, setSelectIdList] = useState<{ productName: string, selectId: string }[]>([])
+  const [showPopup, setShowPopup] = useState(false)
   useEffect(() => {
-    $tv.scrollEl = $tv.getElementByPath('//div[@class="left-nav"]');
-    setTimeout(() => {
-      $tv.next(document.getElementsByClassName("item-nav"), true);
-    }, 10);
-    console.log($tv.addFocusableListener(document.getElementsByClassName('item-nav')[0]));
-    
-    // $tv.addFocusableListener(document.getElementsByClassName('item-nav'), "onFocus",()=>{
-    //   $tv.scrollEl = $tv.getElementByPath('//div[@class="left-nav"]');
-    // });
-    // $tv.addFocusableListener(document.getElementsByClassName('right'), "onFocus",()=>{
-    //   $tv.scrollEl = $tv.getElementByPath('//div[@class="right-nav"]');
-    // });
+    setSelectIdList(datalist.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
   }, [])
+  function onItemFocus(val: any) {
+    const _list = cloneDeep(selectIdList)
+    const _idx = _list.findIndex(val => val.productName == selectProduct.productName)
+    if (_idx < 0) return
+    _list[_idx] = { productName: val.productName, selectId: val.itemId }
+    setSelectIdList(_list)
+  }
+  const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
 
   return (
-    <div className="cloudpage">
-      <div className='head'></div>
-      <div className='counts'>
-        <div className='left-nav'>
-          {dataList.map((_, idx) => (
-            <div className='c-main s-sm item-nav' focusable='' key={idx}>优品影视{idx}</div>
+    <>
+      <FocusEngine onBack={() => navigate(-1)} className="index-box bg-black" listenerKeydown={!showPopup} focusId={datalist[0].itemList[0].itemId}>
+        <FocusScroll className='left-scroll' scrollOrientation='y'>
+          {datalist.map((val, idx) => (
+            <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
           ))}
-        </div>
-        <div className='right-nav'>
-          {dataList.map((_, idx) => (
-            <div className='c-main s-sm right item-nav' focusable='' key={idx}>优品影视{idx}</div>
+        </FocusScroll>
+        <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
+          {selectProduct.itemList.map(val => (
+            <FocusEngine.Item onClick={() => setShowPopup(true)} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
-        </div>
-      </div>
-    </div>
-  )
-}
+        </FocusScroll>
+      </FocusEngine>
+      {/* 弹窗 */}
+      <FocusEngine className="index-box focus-popup" hidden={!showPopup} listenerKeydown={showPopup}>
+        <FocusScroll className='left-scroll scroll1' scrollOrientation='y'>
+          {produstList.map((val, idx) => (
+            <FocusEngine.Item className='box-item' key={idx} onClick={() => {
 
-export default Index
+              setShowPopup(false)
+            }}>{val.productName}</FocusEngine.Item>
+          ))}
+        </FocusScroll>
+      </FocusEngine>
+    </>
+  );
+}
