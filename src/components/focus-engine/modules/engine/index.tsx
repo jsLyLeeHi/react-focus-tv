@@ -135,7 +135,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   }
   return (
     <EngineStore.Provider value={paramsValue}>
-      <div {...restProps} style={{ display: props.hidden ? "none" : "" }} />
+      <div {...restProps} style={props.hidden ? { display: "none" } : {}} />
     </EngineStore.Provider>
   );
 };
