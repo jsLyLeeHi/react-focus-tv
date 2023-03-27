@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { EngineStore, defStoreData } from "../store"
-import { TypeFocusStore } from "../store/index.d"
+import { EngineStore, defStoreData } from "../store/engine"
+import { TypeFocusStore } from "../store/type-engine"
 import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from './type'
 import { EngineItem } from "./Item"
