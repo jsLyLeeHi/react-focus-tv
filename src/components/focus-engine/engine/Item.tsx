@@ -10,8 +10,8 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
   const { renderProps, onInput, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
   const widgetId = useRef(props.id || getUUid())
   const EngineStoreCtx = useContext(EngineStore)
-  /**首次进入组件 */
-  const isKeydown = useRef<boolean | undefined>()
+  /**为了keydown事件顺利接受参数 */
+  const refIsKeydown = useRef<boolean | undefined>()
   useEffect(() => {
     EngineStoreCtx.widgetCreate({
       id: widgetId.current,
@@ -25,7 +25,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     }
   }, [])
   useEffect(() => {
-    isKeydown.current = EngineStoreCtx.listenerKeydown
+    refIsKeydown.current = EngineStoreCtx.listenerKeydown
   }, [EngineStoreCtx.listenerKeydown])
   useEffect(() => {
     if ((props.onFocus instanceof Function) && (EngineStoreCtx.value.id === widgetId.current)) {
@@ -34,7 +34,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     }
     function onItemKeyDown(ev: any) {
       //如果设置不监听按键，则不继续执行
-      if (isKeydown.current === false) return
+      if (refIsKeydown.current === false) return
       if (EngineStoreCtx.value.id !== widgetId.current) return
       ev.preventDefault();
       ev.stopPropagation();

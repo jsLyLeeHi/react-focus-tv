@@ -23,7 +23,6 @@ export default function MyPage() {
 
   return (
     <>
-      <NewPopup showPopup={showPopup} setShowPopup={setShowPopup} />
       <FocusEngine className="index-box bg-black" listenerKeydown={!showPopup} focusId={datalist[0].itemList[0].itemId}>
         <FocusScroll className='left-scroll' scrollOrientation='y'>
           {datalist.map((val, idx) => (
@@ -36,12 +35,13 @@ export default function MyPage() {
           ))}
         </FocusScroll>
       </FocusEngine>
+      <NewPopup showPopup={showPopup} setShowPopup={setShowPopup} />
     </>
   );
 }
 
 function NewPopup(props: { setShowPopup: (e: boolean) => void, showPopup: boolean }) {
-  return props.showPopup ? <FocusEngine className="index-box focus-popup" listenerKeydown={props.showPopup}>
+  return <FocusEngine className="index-box focus-popup" hidden={!props.showPopup} listenerKeydown={props.showPopup}>
     <FocusScroll className='left-scroll scroll1' scrollOrientation='y'>
       {produstList.map((val, idx) => (
         <FocusEngine.Item className='box-item' key={idx} onClick={() => {
@@ -49,5 +49,5 @@ function NewPopup(props: { setShowPopup: (e: boolean) => void, showPopup: boolea
         }}>{val.productName}</FocusEngine.Item>
       ))}
     </FocusScroll>
-  </FocusEngine> : null
+  </FocusEngine>
 }

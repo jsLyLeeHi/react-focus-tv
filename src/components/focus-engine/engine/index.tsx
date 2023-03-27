@@ -18,11 +18,12 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   /**首次进入组件 */
   const firstIn = useRef<boolean>(true)
   /**首次进入组件 */
-  const isKeydown = useRef<boolean | undefined>()
+  const [isCanKeyDown, setIsCanKeyDown] = useState<boolean | undefined>()
+  const refIsKeydown = useRef<boolean | undefined>()
   /**焦点元素id列表 */
   const focusList = useRef<TypeFocusItem[]>([])
   function setStore(defVal: TypeFocusStore.TypeDefStoreData = refStoreValue.current) {
-    if(!defVal.id) return
+    if (!defVal.id) return
     if (!focusList.current.find(v => v.id === defVal.id)) {
       console.error(`setStore:未找到此元素id=${defVal.id}`)
       return
@@ -80,7 +81,8 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     firstIn.current = false
   }, [focusId])
   useEffect(() => {
-    isKeydown.current = listenerKeydown
+    refIsKeydown.current = listenerKeydown
+    setIsCanKeyDown(listenerKeydown)
   }, [listenerKeydown])
   //初始化当前选中项
   useEffect(() => {
@@ -92,7 +94,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     /**按键按下 */
     function onKeyDown(e: KeyboardEvent) {
       //如果设置不监听按键，则不继续执行
-      if (isKeydown.current === false) return
+      if (refIsKeydown.current === false) return
       const _keyValue = onKeyDownIntercept(e)
       if (!_keyValue) return
       if (_keyValue === "BACK" && (onBack instanceof Function)) {
@@ -124,7 +126,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     value: storeValue,
     focusList: focusList.current,
     scrollList,
-    listenerKeydown,
+    listenerKeydown: isCanKeyDown,
     widgetCreate,
     widgetDestroy,
     setCurentId,
@@ -133,7 +135,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   }
   return (
     <EngineStore.Provider value={paramsValue}>
-      <div {...restProps} />
+      <div {...restProps} style={{ display: props.hidden ? "none" : "" }} />
     </EngineStore.Provider>
   );
 };
