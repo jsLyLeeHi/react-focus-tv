@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { EngineStore, defStoreData } from "../../store/engine"
 import { TypeFocusStore } from "../../store/type-engine"
-import { switchFocus, isInViewport } from './algorithm'
+import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
 import { EngineItem } from "../engineItem"
 import { cloneDeep } from 'lodash'
-import { onKeyDownIntercept } from "../../path/untils"
+import { onKeyDownIntercept, isInViewport } from "../../path/untils"
 
 
 const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
@@ -100,10 +100,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     /**按键按下 */
     function onKeyDown(e: KeyboardEvent) {
       //判断页面是否被隐藏，如果被隐藏，则不监听按键
-      if (!engineRef.current) return
-      const rect = engineRef.current.getBoundingClientRect();
-      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-      if (!isVisible) return
+      if (!isInViewport(engineRef.current)) return
       //如果设置不监听按键，则不继续执行
       if (refIsKeydown.current === false) return
       const _keyValue = onKeyDownIntercept(e)

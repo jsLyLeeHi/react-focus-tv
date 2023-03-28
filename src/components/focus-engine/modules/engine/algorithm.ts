@@ -203,10 +203,3 @@ function getOverlapArea(elementRet1: DOMRect, elementRet2: DOMRect, wheel: "x" |
   }
   return false
 }
-
-export function isInViewport(ele?: HTMLDivElement | null): boolean {
-  if (!ele) return false
-  const rect = ele.getBoundingClientRect();
-  const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-  return isVisible
-}
