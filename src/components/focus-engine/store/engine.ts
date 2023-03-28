@@ -11,6 +11,7 @@ export const EngineStore = createContext<{
   focusList: TypeFocusItem[],
   scrollList: TypeScrollIdItem[],
   listenerKeydown?: boolean,
+  isVisible: boolean,
   widgetCreate: (p: TypeFocusStore.TypeWidgetParams) => void
   widgetDestroy: (p: { id: string }) => void
   scrollEleCreate: (p: TypeScrollIdItem) => void
@@ -21,6 +22,7 @@ export const EngineStore = createContext<{
   focusList: [],
   scrollList: [],
   listenerKeydown: true,
+  isVisible: false,
   widgetCreate: () => { },
   widgetDestroy: () => { },
   scrollEleCreate: () => { },

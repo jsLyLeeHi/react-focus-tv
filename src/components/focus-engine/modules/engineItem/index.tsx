@@ -9,7 +9,9 @@ import "./index.less"
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
   const { renderProps, onInput, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
   const widgetId = useRef(props.id || getUUid())
+  const isVisible = useRef(false)
   const EngineStoreCtx = useContext(EngineStore)
+
   /**为了keydown事件顺利接受参数 */
   const refIsKeydown = useRef<boolean | undefined>()
   useEffect(() => {
@@ -25,6 +27,9 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
     }
   }, [])
   useEffect(() => {
+    isVisible.current = EngineStoreCtx.isVisible
+  }, [EngineStoreCtx.isVisible])
+  useEffect(() => {
     refIsKeydown.current = EngineStoreCtx.listenerKeydown
   }, [EngineStoreCtx.listenerKeydown])
   useEffect(() => {
@@ -33,6 +38,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       props.onFocus(_ev)
     }
     function onItemKeyDown(ev: any) {
+      if (!isVisible.current) return
       //如果设置不监听按键，则不继续执行
       if (refIsKeydown.current === false) return
       if (EngineStoreCtx.value.id !== widgetId.current) return

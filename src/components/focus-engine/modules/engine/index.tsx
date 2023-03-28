@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { EngineStore, defStoreData } from "../../store/engine"
 import { TypeFocusStore } from "../../store/type-engine"
-import { switchFocus } from './algorithm'
+import { switchFocus, isInViewport } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
 import { EngineItem } from "../engineItem"
 import { cloneDeep } from 'lodash'
@@ -9,6 +9,9 @@ import { onKeyDownIntercept } from "../../path/untils"
 
 
 const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
+  const engineRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsViseble] = useState(false)
+
   const { listenerKeydown, onInput, onBack, focusId, ...restProps } = props;
   const [storeValue, setStoreValue] = useState<TypeFocusStore.TypeDefStoreData>(defStoreData)
   const refStoreValue = useRef<TypeFocusStore.TypeDefStoreData>(defStoreData)
@@ -90,9 +93,17 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       setCurentId(focusId || focusList.current[0]?.id)
     }
   }, [focusList.current])
+  useEffect(() => {
+    setIsViseble(isInViewport(engineRef.current))
+  }, [props.children])
   useEffect(function () {
     /**按键按下 */
     function onKeyDown(e: KeyboardEvent) {
+      //判断页面是否被隐藏，如果被隐藏，则不监听按键
+      if (!engineRef.current) return
+      const rect = engineRef.current.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!isVisible) return
       //如果设置不监听按键，则不继续执行
       if (refIsKeydown.current === false) return
       const _keyValue = onKeyDownIntercept(e)
@@ -118,6 +129,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       })
     }
     window.addEventListener("keydown", onKeyDown)
+
     return () => {
       window.removeEventListener("keydown", onKeyDown)
     }
@@ -127,6 +139,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     focusList: focusList.current,
     scrollList,
     listenerKeydown: isCanKeyDown,
+    isVisible,
     widgetCreate,
     widgetDestroy,
     setCurentId,
@@ -135,7 +148,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   }
   return (
     <EngineStore.Provider value={paramsValue}>
-      <div {...restProps} style={props.hidden ? { display: "none" } : {}} />
+      <div {...restProps} ref={engineRef} style={props.hidden ? { display: "none" } : {}} />
     </EngineStore.Provider>
   );
 };

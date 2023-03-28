@@ -59,6 +59,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     }
   }, [cacheFocusId, EngineStoreCtx.focusList])
   useEffect(() => {
+    if (!EngineStoreCtx.isVisible) return
     if (!parentRef.current) return
     if (!EngineStoreCtx.value.id) return
     const targetEl = document.getElementById(EngineStoreCtx.value.id) as HTMLElement;
@@ -72,7 +73,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
       offsetDistance,
       parentRef
     })
-  }, [EngineStoreCtx.value.id])
+  }, [EngineStoreCtx.value.id, EngineStoreCtx.isVisible])
   return <div ref={parentRef} {...restProps} id={widgetId.current}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>
 }

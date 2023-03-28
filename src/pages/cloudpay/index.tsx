@@ -23,7 +23,7 @@ export default function MyPage() {
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
 
   function onRouterTo() {
-    navigate("/Pay")
+    navigate("/Items")
   }
 
   return (

@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { routeConfigs } from "@/routes"
 
-import { RouterKeepAlive } from "@/routes/keepLive"
+import { KeepAliveProvider } from 'keepalive-react-component';
 import AppContextProvider from '@/store/context';
 import "@/assets/css/variable.css"
 import "@/assets/css/base.less";
@@ -12,17 +12,11 @@ function App() {
 
   return <AppContextProvider>
     <BrowserRouter>
-      <RouterKeepAlive>
+      <KeepAliveProvider>
         <Routes>
-          {routeConfigs.map((routeConfig) => (
-            <Route key={routeConfig.path} path={routeConfig.path} element={
-              <RouterKeepAlive.Item cacheKey={routeConfig.path}>
-                <routeConfig.component />
-              </RouterKeepAlive.Item>
-            } />
-          ))}
+          {routeConfigs.map((routeConfig) => <Route key={routeConfig.path} path={routeConfig.path} element={<routeConfig.component />} />)}
         </Routes>
-      </RouterKeepAlive>
+      </KeepAliveProvider>
     </BrowserRouter>
   </AppContextProvider>
 }
