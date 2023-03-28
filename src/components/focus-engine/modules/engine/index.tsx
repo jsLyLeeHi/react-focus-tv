@@ -4,7 +4,7 @@ import { TypeFocusStore } from "../../store/type-engine"
 import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
 import { EngineItem } from "../engineItem"
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isNaN } from 'lodash'
 import { onKeyDownIntercept, isInViewport } from "../../path/untils"
 
 
@@ -12,7 +12,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   const engineRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsViseble] = useState(false)
 
-  const { listenerKeydown, onInput, onBack, focusId, ...restProps } = props;
+  const { listenerKeydown, onInput, onBack, onHome, onBackSpace, onDel, onMenu, onEnter, focusId, ...restProps } = props;
   const [storeValue, setStoreValue] = useState<TypeFocusStore.TypeDefStoreData>(defStoreData)
   const refStoreValue = useRef<TypeFocusStore.TypeDefStoreData>(defStoreData)
   /**scroll元素id列表 */
@@ -105,28 +105,31 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       if (refIsKeydown.current === false) return
       const _keyValue = onKeyDownIntercept(e)
       if (!_keyValue) return
-      if (_keyValue === "BACK" && (onBack instanceof Function)) {
-        onBack()
+      //焦点操作
+      if (_keyValue === "RIGHT" || _keyValue === "LEFT" || _keyValue === "UP" || _keyValue === "DOWN") {
+        const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
+        let _id = refStoreValue.current.id
+        if ((moveFn instanceof Function) && refStoreValue.current.id) {
+          const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, refScrollList.current)
+          if (!_nextItemId) return
+          _id = _nextItemId
+        }
+        setStore({
+          ...refStoreValue.current,
+          keyCode: _keyValue,
+          id: _id
+        })
         return
       }
-      if ((onInput instanceof Function) && _keyValue !== "ENTER") {
-        onInput(_keyValue)
-      }
-      const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
-      let _id = refStoreValue.current.id
-      if ((moveFn instanceof Function) && refStoreValue.current.id) {
-        const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, refScrollList.current)
-        if (!_nextItemId) return
-        _id = _nextItemId
-      }
-      setStore({
-        ...refStoreValue.current,
-        keyCode: _keyValue,
-        id: _id
-      })
+      if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
+      if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
+      if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
+      if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
+      if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
+      if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
+      if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
     }
     window.addEventListener("keydown", onKeyDown)
-
     return () => {
       window.removeEventListener("keydown", onKeyDown)
     }

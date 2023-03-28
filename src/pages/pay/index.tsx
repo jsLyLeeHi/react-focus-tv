@@ -10,7 +10,7 @@ export default function MyPage() {
 
   return (
     <>
-      <FocusEngine className="index-box bg-black" onBack={() => navigate(-1)}>
+      <FocusEngine className="pay-box bg-black" onBack={() => navigate(-1)}>
         <FocusScroll className='left-scroll' scrollOrientation='y'>
           {datalist.map((val, idx) => (
             <FocusEngine.Item className='box-item' key={idx}>{val.productName}</FocusEngine.Item>

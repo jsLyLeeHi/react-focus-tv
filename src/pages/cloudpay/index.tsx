@@ -28,7 +28,10 @@ export default function MyPage() {
 
   return (
     <>
-      <FocusEngine className="index-box bg-black" focusId={datalist[0].itemList[0].itemId}>
+      <FocusEngine onInput={(ev)=>{
+        console.log(ev);
+        
+      }} className="index-box bg-black" focusId={datalist[0].itemList[0].itemId}>
         <FocusScroll className='left-scroll' scrollOrientation='y'>
           {datalist.map((val, idx) => (
             <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
@@ -36,7 +39,7 @@ export default function MyPage() {
         </FocusScroll>
         <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
           {selectProduct.itemList.map(val => (
-            <FocusEngine.Item onClick={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
+            <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
       </FocusEngine>
