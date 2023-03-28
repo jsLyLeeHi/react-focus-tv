@@ -25,7 +25,7 @@ export default function MyPage() {
 
   return (
     <>
-      <FocusEngine onBack={() => navigate(-1)} className="index-box bg-black" listenerKeydown={!showPopup} focusId={datalist[0].itemList[0].itemId}>
+      <FocusEngine onBack={() => navigate(-1)} className="index-box bg-dull" listenerKeydown={!showPopup} focusId={datalist[0].itemList[0].itemId}>
         <FocusScroll className='left-scroll' scrollOrientation='y'>
           {datalist.map((val, idx) => (
             <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
@@ -38,13 +38,10 @@ export default function MyPage() {
         </FocusScroll>
       </FocusEngine>
       {/* 弹窗 */}
-      <FocusEngine className="index-box focus-popup" hidden={!showPopup} listenerKeydown={showPopup}>
+      <FocusEngine className="index-box focus-popup" hidden={!showPopup} onBack={() => setShowPopup(false)} listenerKeydown={showPopup}>
         <FocusScroll className='left-scroll scroll1' scrollOrientation='y'>
           {produstList.map((val, idx) => (
-            <FocusEngine.Item className='box-item' key={idx} onClick={() => {
-
-              setShowPopup(false)
-            }}>{val.productName}</FocusEngine.Item>
+            <FocusEngine.Item className='box-item' key={idx}>{val.productName}</FocusEngine.Item>
           ))}
         </FocusScroll>
       </FocusEngine>
