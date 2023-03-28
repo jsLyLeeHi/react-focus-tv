@@ -42,11 +42,7 @@ export type FocusEngineItemProps = {
   upGo?: string[],
   downGo?: string[],
   onInput?: (ev: TypeKeyCode) => void,
-  onBack?: () => void,
-  onHome?: () => void,
-  onBackSpace?: () => void,
   onDel?: () => void,
-  onMenu?: () => void,
   onEnter?: () => void,
   renderProps?: (params: TypeRenderItem) => JSX.Element
 } & React.HTMLAttributes<HTMLDivElement>;

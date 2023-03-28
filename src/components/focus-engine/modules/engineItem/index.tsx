@@ -8,7 +8,7 @@ import { isNaN } from 'lodash';
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
-  const { renderProps, onInput, onBack, onHome, onBackSpace, onDel, onMenu, onEnter, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
+  const { renderProps, onInput, onDel, onEnter, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
   const widgetId = useRef(props.id || getUUid())
   const isVisible = useRef(false)
   const EngineStoreCtx = useContext(EngineStore)
@@ -49,14 +49,8 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       if (EngineStoreCtx.value.id !== widgetId.current) return
       const _keyValue = keyByIptv[ev.keyCode]
       if (!_keyValue) return
-      //焦点操作
-      if (_keyValue === "RIGHT" || _keyValue === "LEFT" || _keyValue === "UP" || _keyValue === "DOWN") return
-      if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
-      if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
       if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
-      if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
       if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
-      if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
       if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
     }
     window.addEventListener("keydown", onItemKeyDown)
