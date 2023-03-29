@@ -8,10 +8,10 @@ function Index() {
 
   return (
     <div className="cloudpage">
-      <div className="item" onClick={() => setUserInfo({ userId: new Date().getTime() + "" })} focusable="">{userInfo.userId}</div>
-      <div className="item" focusable=""></div>
-      <div className="item" focusable=""></div>
-      <div className="item" focusable=""></div>
+      <div className="item" onClick={() => setUserInfo({ userId: new Date().getTime() + "" })}>{userInfo.userId}</div>
+      <div className="item"></div>
+      <div className="item"></div>
+      <div className="item"></div>
     </div>
   )
 }

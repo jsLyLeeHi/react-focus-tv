@@ -12,13 +12,13 @@ export default defineConfig({
   plugins: [
     react(),
     legacyPlugin({
-      targets: ['chrome 52'],  // 需要兼容的目标列表，可以设置多个
+      targets: ['defaults', 'ie >= 11', 'chrome 52'],  // 需要兼容的目标列表，可以设置多个
       additionalLegacyPolyfills: ['regenerator-runtime/runtime'] // 面向IE11时需要此插件
     })
   ],
   resolve: {
     alias: [
-      // /@/xxxx => src/xxxx
+      // @/xxxx => src/xxxx
       {
         find: /\@\//,
         replacement: pathResolve('src') + '/',

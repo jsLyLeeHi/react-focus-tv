@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import { routeConfigs } from "@/routes"
 
 import { KeepAliveProvider } from 'keepalive-react-component';
@@ -11,13 +11,13 @@ import './main.less'
 function App() {
 
   return <AppContextProvider>
-    <BrowserRouter>
+    <HashRouter>
       <KeepAliveProvider>
         <Routes>
           {routeConfigs.map((routeConfig) => <Route key={routeConfig.path} path={routeConfig.path} element={<routeConfig.component />} />)}
         </Routes>
       </KeepAliveProvider>
-    </BrowserRouter>
+    </HashRouter>
   </AppContextProvider>
 }
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App />)
