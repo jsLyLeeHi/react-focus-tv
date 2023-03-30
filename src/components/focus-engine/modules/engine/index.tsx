@@ -4,8 +4,9 @@ import { TypeFocusStore } from "../../store/type-engine"
 import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
 import { EngineItem } from "../engineItem"
-import { cloneDeep, isNaN } from 'lodash'
+import { cloneDeep, isNaN, throttle } from 'lodash'
 import { onKeyDownIntercept, isInViewport } from "../../path/untils"
+import { config } from "../../path/config"
 
 
 const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
@@ -96,43 +97,44 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   useEffect(() => {
     setIsViseble(isInViewport(engineRef.current))
   }, [props.children])
-  useEffect(function () {
-    /**按键按下 */
-    function onKeyDown(e: KeyboardEvent) {
-      //判断页面是否被隐藏，如果被隐藏，则不监听按键
-      if (!isInViewport(engineRef.current)) return
-      //如果设置不监听按键，则不继续执行
-      if (refIsKeydown.current === false) return
-      const _keyValue = onKeyDownIntercept(e)
-      if (!_keyValue) return
-      //焦点操作
-      if (_keyValue === "RIGHT" || _keyValue === "LEFT" || _keyValue === "UP" || _keyValue === "DOWN") {
-        const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
-        let _id = refStoreValue.current.id
-        if ((moveFn instanceof Function) && refStoreValue.current.id) {
-          const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, refScrollList.current)
-          if (!_nextItemId) return
-          _id = _nextItemId
-        }
-        setStore({
-          ...refStoreValue.current,
-          keyCode: _keyValue,
-          id: _id
-        })
-        return
+  /**按键按下 */
+  function onKeyDown(e: KeyboardEvent) {
+    //判断页面是否被隐藏，如果被隐藏，则不监听按键
+    if (!isInViewport(engineRef.current)) return
+    //如果设置不监听按键，则不继续执行
+    if (refIsKeydown.current === false) return
+    const _keyValue = onKeyDownIntercept(e)
+    if (!_keyValue) return
+    //焦点操作
+    if (_keyValue === "RIGHT" || _keyValue === "LEFT" || _keyValue === "UP" || _keyValue === "DOWN") {
+      const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
+      let _id = refStoreValue.current.id
+      if ((moveFn instanceof Function) && refStoreValue.current.id) {
+        const _nextItemId = moveFn(refStoreValue.current.id, focusList.current, refScrollList.current)
+        if (!_nextItemId) return
+        _id = _nextItemId
       }
-      
-      if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
-      if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
-      if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
-      if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
-      if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
-      if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
-      if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
+      setStore({
+        ...refStoreValue.current,
+        keyCode: _keyValue,
+        id: _id
+      })
+      return
     }
-    window.addEventListener("keydown", onKeyDown)
+
+    if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
+    if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
+    if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
+    if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
+    if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
+    if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
+    if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
+  }
+  useEffect(function () {
+    const onkey = throttle(onKeyDown, config.clickInterval)
+    window.addEventListener("keydown", onkey)
     return () => {
-      window.removeEventListener("keydown", onKeyDown)
+      window.removeEventListener("keydown", onkey)
     }
   }, [])
   const paramsValue = {

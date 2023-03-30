@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useContext } from 'react'
-import { getUUid } from '../../path/untils'
+import { getUUid, onKeyDownIntercept } from '../../path/untils'
 import { EngineStore } from "../../store/engine"
-import { keyCode } from "../../key_iptv";
 import { FocusEngineItemProps } from "../type"
-import { isNaN } from 'lodash';
+import { isNaN, throttle } from 'lodash';
+import { config } from "../../path/config"
 import "./index.less"
 
 
@@ -33,29 +33,29 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
   useEffect(() => {
     refIsKeydown.current = EngineStoreCtx.listenerKeydown
   }, [EngineStoreCtx.listenerKeydown])
+  function onKeyDown(ev: any) {
+    //判断页面是否被隐藏，如果被隐藏，则不监听按键
+    if (!isVisible.current) return
+    //如果设置不监听按键，则不继续执行
+    if (refIsKeydown.current === false) return
+    //如果当前焦点不在该焦点元素上，则不继续执行
+    if (EngineStoreCtx.value.id !== widgetId.current) return
+    const _keyValue = onKeyDownIntercept(ev)
+    if (!_keyValue) return
+    if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
+    if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
+    if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
+  }
   useEffect(() => {
+    const onkey = throttle(onKeyDown, config.clickInterval)
+    window.addEventListener("keydown", onkey)
+    
     if ((props.onFocus instanceof Function) && (EngineStoreCtx.value.id === widgetId.current)) {
       const _ev: any = true
       props.onFocus(_ev)
     }
-    function onItemKeyDown(ev: any) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      //判断页面是否被隐藏，如果被隐藏，则不监听按键
-      if (!isVisible.current) return
-      //如果设置不监听按键，则不继续执行
-      if (refIsKeydown.current === false) return
-      //如果当前焦点不在该焦点元素上，则不继续执行
-      if (EngineStoreCtx.value.id !== widgetId.current) return
-      const _keyValue = keyCode[ev.keyCode]
-      if (!_keyValue) return
-      if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
-      if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
-      if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
-    }
-    window.addEventListener("keydown", onItemKeyDown)
     return () => {
-      window.removeEventListener("keydown", onItemKeyDown)
+      window.removeEventListener("keydown", onkey)
     }
   }, [EngineStoreCtx.value.id])
   function getClassName(_focus: boolean, _isselected: boolean, c?: string) {
