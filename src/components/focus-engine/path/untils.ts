@@ -1,4 +1,4 @@
-import { keyByIptv } from "../key_iptv";
+import { keyCode } from "../key_iptv";
 import { config } from "../path/config"
 
 export function getUUid() {
@@ -27,7 +27,7 @@ export function onKeyDownIntercept(ev: KeyboardEvent) {
     clearTimeout(timer.current)
     timer.current = undefined
   }, config.clickInterval);
-  const _keyValue = keyByIptv[ev.keyCode]
+  const _keyValue = keyCode[ev.keyCode]
   return _keyValue
 }
 /**获取元素是否在页面中 */

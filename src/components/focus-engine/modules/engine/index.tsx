@@ -121,6 +121,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
         })
         return
       }
+      
       if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
       if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
       if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()

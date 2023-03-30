@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useContext } from 'react'
 import { getUUid } from '../../path/untils'
 import { EngineStore } from "../../store/engine"
-import { keyByIptv } from "../../key_iptv";
+import { keyCode } from "../../key_iptv";
 import { FocusEngineItemProps } from "../type"
-import "./index.less"
 import { isNaN } from 'lodash';
+import "./index.less"
 
 
 export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
@@ -47,7 +47,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
       if (refIsKeydown.current === false) return
       //如果当前焦点不在该焦点元素上，则不继续执行
       if (EngineStoreCtx.value.id !== widgetId.current) return
-      const _keyValue = keyByIptv[ev.keyCode]
+      const _keyValue = keyCode[ev.keyCode]
       if (!_keyValue) return
       if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
       if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
