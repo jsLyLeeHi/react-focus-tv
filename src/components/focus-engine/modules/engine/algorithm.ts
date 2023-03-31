@@ -72,27 +72,26 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
       let isgoto = false
       switch (direction) {
         case "RIGHT":
-          isSameDirection = elementCenter.x > currentElementCenter.x;
+          isSameDirection = elementRect.left > (currentElementRect.left + currentElementRect.width);
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!rightGo.find(v => v === item.id)
           break;
         case "LEFT":
-          isSameDirection = elementCenter.x < currentElementCenter.x;
+          isSameDirection = (elementRect.left + elementRect.width) < currentElementRect.left;
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!leftGo.find(v => v === item.id)
           break;
         case "UP":
-          isSameDirection = elementCenter.y < currentElementCenter.y;
+          isSameDirection = (elementRect.top + elementRect.height) < currentElementRect.top;
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!upGo.find(v => v === item.id)
           break;
         case "DOWN":
-          isSameDirection = elementCenter.y > currentElementCenter.y;
+          isSameDirection = elementRect.top > (currentElementRect.top + currentElementRect.height);
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!downGo.find(v => v === item.id)
           break;
       }
-      // 计算当前元素与每个元素之间的距离
       const distance = Math.sqrt(Math.pow(elementCenter.x - currentElementCenter.x, 2) + Math.pow(elementCenter.y - currentElementCenter.y, 2));
       distanceList.push({
         id: item.id,
