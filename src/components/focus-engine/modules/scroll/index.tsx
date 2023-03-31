@@ -61,19 +61,19 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
   useEffect(() => {
     if (!EngineStoreCtx.isVisible) return
     if (!parentRef.current) return
-    if (!EngineStoreCtx.value.id) return
-    const targetEl = document.getElementById(EngineStoreCtx.value.id) as HTMLElement;
+    if (!EngineStoreCtx.focusId) return
+    const targetEl = document.getElementById(EngineStoreCtx.focusId) as HTMLElement;
     if (!targetEl) return
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
-    setCacheFocusId(EngineStoreCtx.value.id)
+    setCacheFocusId(EngineStoreCtx.focusId)
     scrollToByEle({
       ele: targetEl,
       scrollOrientation,
       offsetDistance,
       parentRef
     })
-  }, [EngineStoreCtx.value.id, EngineStoreCtx.isVisible])
+  }, [EngineStoreCtx.focusId, EngineStoreCtx.isVisible])
   return <div ref={parentRef} {...restProps} id={widgetId.current}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>
 }

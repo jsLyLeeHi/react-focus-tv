@@ -1,4 +1,3 @@
-import { keyCode } from "../key_iptv";
 
 export function getUUid() {
   //生成一个UUID
@@ -13,13 +12,6 @@ export function getUUid() {
 
   var uuid = s.join("");
   return uuid;
-}
-/**监听键盘拦截 */
-export function onKeyDownIntercept(ev: KeyboardEvent) {
-  ev.preventDefault();
-  ev.stopPropagation();
-  const _keyValue = keyCode[ev.keyCode]
-  return _keyValue
 }
 /**获取元素是否在页面中 */
 export function isInViewport(ele?: HTMLDivElement | null): boolean {
