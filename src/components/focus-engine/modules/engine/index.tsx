@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { TypeKeyCode, keyCode } from "../../key_iptv";
 import { EngineStore } from "../../store/engine"
-import { TypeFocusStore } from "../../store/type-engine"
 import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
 import { EngineItem } from "../engineItem"
 import { cloneDeep, isNaN, throttle } from 'lodash'
-import { isInViewport } from "../../path/untils"
+import { isInViewport } from "./data"
 import { config } from "../../path/config"
 
 
@@ -37,7 +36,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     setStoreFocusId(defVal)
   }
   /**子组件中有widget创建了 */
-  function widgetCreate(p: TypeFocusStore.TypeWidgetParams) {
+  function widgetCreate(p: TypeFocusItem) {
     const _list = cloneDeep(focusList.current)
     const _idx = _list.findIndex(c => c.id === p.id)
     if (_idx < 0) {

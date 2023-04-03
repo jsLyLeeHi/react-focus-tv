@@ -1,5 +1,4 @@
 import { createContext } from 'react'
-import { TypeFocusStore } from "./type-engine"
 import { TypeScrollIdItem, TypeFocusItem } from "../modules/type"
 import { TypeKeyCode } from "../key_iptv";
 export const EngineStore = createContext<{
@@ -8,7 +7,7 @@ export const EngineStore = createContext<{
   focusList: TypeFocusItem[],
   scrollList: TypeScrollIdItem[],
   isVisible: boolean,
-  widgetCreate: (p: TypeFocusStore.TypeWidgetParams) => void
+  widgetCreate: (p: TypeFocusItem) => void
   widgetDestroy: (p: { id: string }) => void
   scrollEleCreate: (p: TypeScrollIdItem) => void
   scrollEleDestroy: (p: { id: string }) => void

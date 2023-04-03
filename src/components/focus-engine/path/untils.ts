@@ -13,10 +13,3 @@ export function getUUid() {
   var uuid = s.join("");
   return uuid;
 }
-/**获取元素是否在页面中 */
-export function isInViewport(ele?: HTMLDivElement | null): boolean {
-  if (!ele) return false
-  const rect = ele.getBoundingClientRect();
-  const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-  return isVisible
-}
