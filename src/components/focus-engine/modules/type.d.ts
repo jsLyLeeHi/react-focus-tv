@@ -7,7 +7,13 @@ export type TypeFocusItem = {
   downGo: string[],
 }
 type TypeswitchFocusFun = (id: string, _list: TypeFocusItem[], scrollList: TypeScrollIdItem[]) => string | null | undefined
-export type TypeScrollIdItem = { id: string, cacheFocusId?: string, list: TypeFocusItem[] }
+export type TypeScrollIdItem = {
+  id: string,
+  scrollOrientation: "x" | "y",
+  scrollOut?: boolean,
+  cacheFocusId?: string,
+  list: TypeFocusItem[]
+}
 export type TypeswitchFocus = {
   "RIGHT": TypeswitchFocusFun,
   "LEFT": TypeswitchFocusFun,

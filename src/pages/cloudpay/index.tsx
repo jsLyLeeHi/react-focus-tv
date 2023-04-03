@@ -29,7 +29,7 @@ export default function MyPage() {
   return (
     <>
       <FocusEngine className="page-box index-page bg-black" focusId={datalist[0].itemList[0].itemId}>
-        <FocusScroll className='left-scroll' scrollOrientation='y'>
+        <FocusScroll className='left-scroll' scrollOrientation='y' scrollOut={false}>
           {datalist.map((val, idx) => (
             <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
           ))}

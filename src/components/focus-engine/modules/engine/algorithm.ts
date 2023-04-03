@@ -39,7 +39,20 @@ interface TypeDistanceItem {
  */
 function getNearestElementId(currentElementId: string, allElementsIdList: TypeFocusItem[], scrollList: TypeScrollIdItem[], direction: Direction): string | null {
   try {
-
+    const scrollInfo = isInScrollId(currentElementId, scrollList)
+    const endInScroll = scrollInfo?.idx === (scrollInfo.item?.list.length || 0) - 1,
+      firstInScroll = scrollInfo?.idx === 0
+    if (
+      scrollInfo.item?.scrollOut === false &&
+      (
+        (firstInScroll && (scrollInfo.item?.scrollOrientation === "x" && direction === "LEFT")) ||
+        (endInScroll && (scrollInfo.item?.scrollOrientation === "x" && direction === "RIGHT")) ||
+        (firstInScroll && (scrollInfo.item?.scrollOrientation === "y" && direction === "UP")) ||
+        (endInScroll && (scrollInfo.item?.scrollOrientation === "y" && direction === "DOWN"))
+      )
+    ) {
+      return currentElementId
+    }
     // 获取当前元素的DOM元素节点和位置信息
     const currentElement = document.getElementById(currentElementId) as HTMLElement;
     const currentElementRect = currentElement.getBoundingClientRect();
@@ -120,9 +133,9 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
     //查找scroll中的缓存焦点元素的id,
     let _id = currentElementId
-    const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)
+    const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)?.id
     //如果当前聚焦元素也是scroll中的元素
-    if (isInScrollId(currentElementId, scrollList) === _catcheScrollId) {
+    if (scrollInfo?.id === _catcheScrollId) {
       _id = minDistanceElement?.id
     } else {
       _id = _catcheScrollId ?? minDistanceElement?.id

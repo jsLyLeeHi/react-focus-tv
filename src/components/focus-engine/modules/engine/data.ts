@@ -38,21 +38,25 @@ export function isVisualInScroll(idList: TypeScrollIdItem[], ele: HTMLElement) {
 
 /**查找是否在scroll组件中，如果在组件中，则使用scroll组件中的缓存id，没有则返回当前id */
 export function isInScrollId(id: string, scrollList: TypeScrollIdItem[]) {
-  let _returnId
+  let _returnId, item, idx
   for (let pidx = 0; pidx < scrollList.length; pidx++) {
     const pval = scrollList[pidx];
-    let _isInThisScroll = false
     for (let i = 0; i < pval.list.length; i++) {
       const v = pval.list[i];
       if (v.id === id) {
         _returnId = pval.cacheFocusId;
-        _isInThisScroll = true
+        item = pval
+        idx = i
         continue;
       }
     }
-    if (_isInThisScroll) continue;
+    if (_returnId) continue;
   }
-  return _returnId
+  return {
+    id: _returnId,
+    item,
+    idx
+  }
 }
 /**
  * 计算两个矩形元素之间x/y轴上的重叠部分。
