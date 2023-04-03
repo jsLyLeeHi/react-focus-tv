@@ -102,6 +102,7 @@ type ElementPosition = TypeFocusItem & {
 
 function getElementsPositions(parent: HTMLElement, childrenList: TypeFocusItem[], position: number[] = []): ElementPosition[] {
   const result: ElementPosition[] = [];
+  if(!parent) return []
   // 遍历当前节点的所有子节点
   for (let i = 0; i < parent.children.length; i++) {
     const child = parent.children[i] as HTMLElement;
