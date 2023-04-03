@@ -45,10 +45,8 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     if (
       scrollInfo.item?.scrollOut === false &&
       (
-        (firstInScroll && (scrollInfo.item?.scrollOrientation === "x" && direction === "LEFT")) ||
-        (endInScroll && (scrollInfo.item?.scrollOrientation === "x" && direction === "RIGHT")) ||
-        (firstInScroll && (scrollInfo.item?.scrollOrientation === "y" && direction === "UP")) ||
-        (endInScroll && (scrollInfo.item?.scrollOrientation === "y" && direction === "DOWN"))
+        (scrollInfo.item?.scrollOrientation === "x" && ((firstInScroll && direction === "LEFT") || (endInScroll && direction === "RIGHT"))) ||
+        (scrollInfo.item?.scrollOrientation === "y" && ((firstInScroll && direction === "UP") || (endInScroll && direction === "DOWN")))
       )
     ) {
       return currentElementId
