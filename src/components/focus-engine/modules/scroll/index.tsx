@@ -35,7 +35,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     clearInterval(animationTimer.current)
     animationTimer.current = undefined
     if (!parentRef.current) return
-    let _num = scrollOrientation === "x" ? parentRef.current.scrollLeft : parentRef.current.scrollTop, interval = 4
+    let _num = scrollOrientation === "x" ? parentRef.current.scrollLeft : parentRef.current.scrollTop, interval = 2
     /**每次移动的距离 */
     const distance = (num - (scrollOrientation === "x" ? parentRef.current.scrollLeft : parentRef.current.scrollTop)) / (config.clickInterval / interval)
     animationTimer.current = setInterval(() => {
