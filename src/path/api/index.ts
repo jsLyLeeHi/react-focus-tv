@@ -1,4 +1,4 @@
-import { tvAxios } from "@/axios"
+import { tvAxios } from "@/path/axios"
 /**获取项目列表 */
 export function getProjects() {
   return tvAxios.post("v3/cloudpay/queryPrice",

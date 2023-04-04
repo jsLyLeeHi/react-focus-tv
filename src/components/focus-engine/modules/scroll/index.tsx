@@ -1,7 +1,8 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { getUUid } from '../../path/untils';
 import { EngineStore } from "../../store/engine"
-import { scrollToByEle, sortElements } from "./data"
+import { getScrollNumber, sortElements } from "./data"
+import { config } from "../../path/config"
 import { TypeFocusItem } from "../type"
 import "./index.less"
 
@@ -24,6 +25,37 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
   const parentRef = useRef<HTMLDivElement>(null)
   const [cacheFocusId, setCacheFocusId] = useState<string | undefined>()
   const EngineStoreCtx = useContext(EngineStore)
+  const animationTimer = useRef<number>()
+  /**
+   * 滚动条移动到指定位置
+   * @time 滚动的总时间
+   * @num 滚动的距离
+   */
+  function scrollTo(num: number) {
+    clearInterval(animationTimer.current)
+    animationTimer.current = undefined
+    if (!parentRef.current) return
+    let _num = scrollOrientation === "x" ? parentRef.current.scrollLeft : parentRef.current.scrollTop, interval = 10
+    /**每次移动的距离 */
+    const distance = (num - (scrollOrientation === "x" ? parentRef.current.scrollLeft : parentRef.current.scrollTop)) / (config.clickInterval / interval)
+    animationTimer.current = setInterval(() => {
+      if (!parentRef.current) return
+      if (scrollOrientation === "x") {
+        parentRef.current.scrollLeft = _num
+      } else {
+        parentRef.current.scrollTop = _num
+      }
+      _num = _num + distance
+      if (((distance > 0) && (_num >= num)) || ((distance < 0) && (_num <= num))) {
+        clearInterval(animationTimer.current)
+        if (scrollOrientation === "x") {
+          parentRef.current.scrollLeft = num
+        } else {
+          parentRef.current.scrollTop = num
+        }
+      }
+    }, interval)
+  }
   function findFocusList() {
     const _list: TypeFocusItem[] = EngineStoreCtx.focusList.filter(v => {
       if (!parentRef.current) return
@@ -33,21 +65,15 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     return scrollOut === false ? sortElements(document.getElementById(widgetId.current) as HTMLElement, _list) : _list
   }
   useEffect(() => {
-    if (cacheFocusId && selectId !== cacheFocusId) {
-      setCacheFocusId(selectId)
-    }
+    if (cacheFocusId && selectId !== cacheFocusId) setCacheFocusId(selectId)
     if (!parentRef.current) return
     if (!selectId) return
     const targetEl = document.getElementById(selectId) as HTMLElement;
     if (!targetEl) return
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
-    scrollToByEle({
-      ele: targetEl,
-      scrollOrientation,
-      offsetDistance,
-      parentRef
-    })
+    const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
+    scrollTo(scrollNumber)
   }, [selectId])
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
@@ -75,12 +101,8 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
     setCacheFocusId(EngineStoreCtx.focusId)
-    scrollToByEle({
-      ele: targetEl,
-      scrollOrientation,
-      offsetDistance,
-      parentRef
-    })
+    const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
+    scrollTo(scrollNumber)
   }, [EngineStoreCtx.focusId, EngineStoreCtx.isVisible])
   return <div ref={parentRef} {...restProps} id={widgetId.current}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>

@@ -12,21 +12,21 @@ export function isInViewport(ele?: HTMLDivElement | null): boolean {
 
 
 
-/**查找元素是否在scroll的可是区域内 */
+/**查找元素是否在scroll的可视区域内 */
 export function isVisualInScroll(idList: TypeScrollIdItem[], ele: HTMLElement) {
   let isVisual = true
+  const childRect = ele.getBoundingClientRect();
+
   for (let i = 0; i < idList.length; i++) {
     const val = idList[i];
     const dom = document.getElementById(val.id) as HTMLElement
     if (dom.contains(ele)) {
       const containerRect = dom.getBoundingClientRect();
-      const childRect = ele.getBoundingClientRect();
       // isInViewport 表示子元素是否在可视区域内
-      isVisual =
-        childRect.top >= containerRect.top &&
-        childRect.bottom <= containerRect.bottom &&
+      isVisual = childRect.top >= containerRect.top &&
+        (childRect.bottom - childRect.height) <= containerRect.bottom &&
         childRect.left >= containerRect.left &&
-        childRect.right <= containerRect.right;
+        (childRect.right - childRect.width) <= containerRect.right;
       if (!isVisual) {
         isVisual = false
         continue

@@ -1,5 +1,5 @@
 import { TypeswitchFocus, TypeScrollIdItem, TypeFocusItem } from "../type"
-import { isInScrollId, isVisualInScroll, getOverlapArea } from "./data"
+import { isInScrollId, getOverlapArea } from "./data"
 
 
 
@@ -79,7 +79,8 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
       // 检查目标轴上有重叠部分的目标元素
       let overlapArea = false;
       // 检查元素是否在scroll中可视
-      let isScrollVisual = isVisualInScroll(scrollList, element);
+      let isScrollVisual = true;
+      // let isScrollVisual = isVisualInScroll(scrollList, element);
       //是否优先跳转,如果标记了多个优先跳转，则优先跳转距离最近的元素，这里是考虑焦点元素可能在页面上消失
       let isgoto = false
       switch (direction) {
