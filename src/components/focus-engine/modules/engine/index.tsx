@@ -52,7 +52,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     if (_index >= 0) focusList.current.splice(_index, 1)
   }
   /**子组件中有scroll创建或者销毁了 */
-  function scrollEleCreate(p: { id: string, list: TypeFocusItem[], cacheFocusId?: string }) {
+  function scrollEleCreate(p: TypeScrollIdItem) {
     const _list = cloneDeep(refScrollList.current)
     const _idx = _list.findIndex(c => c.id === p.id)
     if (_idx < 0) {
