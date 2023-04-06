@@ -35,11 +35,18 @@ export default function MyPage() {
             <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
           ))}
         </FocusScroll>
-        <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
+        <FocusScroll className='right-scroll' scrollOrientation='y' scrollOut={false} selectId={selectIdItem?.selectId}>
           {selectProduct.itemList.map(val => (
             <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
+        <div className='left-scroll'>
+          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
+          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
+          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
+          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
+          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
+        </div>
       </div>
     </div>
   </FocusEngine>

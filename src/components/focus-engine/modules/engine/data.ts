@@ -23,9 +23,9 @@ export function isVisualInScroll(idList: TypeScrollIdItem[], ele: HTMLElement) {
     if (dom.contains(ele)) {
       const containerRect = dom.getBoundingClientRect();
       // isInViewport 表示子元素是否在可视区域内
-      isVisual = childRect.top >= containerRect.top &&
+      isVisual = (childRect.top + childRect.height) >= containerRect.top &&
         (childRect.bottom - childRect.height) <= containerRect.bottom &&
-        childRect.left >= containerRect.left &&
+        (childRect.left + childRect.width) >= containerRect.left &&
         (childRect.right - childRect.width) <= containerRect.right;
       if (!isVisual) {
         isVisual = false

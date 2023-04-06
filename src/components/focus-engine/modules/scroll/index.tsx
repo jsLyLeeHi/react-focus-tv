@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { getUUid } from '../../path/untils';
 import { EngineStore } from "../../store/engine"
-import { getScrollNumber, sortElements } from "./data"
+import { getScrollNumber } from "./data"
 import { config } from "../../path/config"
 import { TypeFocusItem } from "../type"
 import "./index.less"
@@ -62,7 +62,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
       const ele = document.getElementById(v.id) as HTMLElement;
       return parentRef.current.contains(ele)
     })
-    return scrollOut === false ? sortElements(document.getElementById(widgetId.current) as HTMLElement, _list) : _list
+    return _list
   }
   useEffect(() => {
     if (cacheFocusId && selectId !== cacheFocusId) setCacheFocusId(selectId)
