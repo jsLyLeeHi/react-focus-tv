@@ -25,13 +25,16 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
   const parentRef = useRef<HTMLDivElement>(null)
   const [cacheFocusId, setCacheFocusId] = useState<string | undefined>()
   const EngineStoreCtx = useContext(EngineStore)
+  /**动画时间缓存 */
   const animationTimer = useRef<number>()
+  const scrollNum = useRef<number>(0)
   /**
    * 滚动条移动到指定位置
    * @time 滚动的总时间
    * @num 滚动的距离
    */
-  function scrollTo(num: number) {
+  function scrollAnimiteTo(num: number) {
+    scrollNum.current = num
     clearInterval(animationTimer.current)
     animationTimer.current = undefined
     if (!parentRef.current) return
@@ -64,6 +67,16 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     })
     return _list
   }
+  //监听页面显示事件，重置当前scrollnum为页面隐藏之间的scrollnum
+  useEffect(() => {
+    if (!EngineStoreCtx.isVisible) return
+    if (!parentRef.current) return
+    if (scrollOrientation === "y" && scrollNum.current !== parentRef.current.scrollTop) {
+      parentRef.current.scrollTop = scrollNum.current
+    } else if (scrollOrientation === "x" && scrollNum.current !== parentRef.current.scrollLeft) {
+      parentRef.current.scrollLeft = scrollNum.current
+    }
+  }, [EngineStoreCtx.isVisible])
   useEffect(() => {
     if (cacheFocusId && selectId !== cacheFocusId) setCacheFocusId(selectId)
     if (!parentRef.current) return
@@ -73,7 +86,12 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     //如果该元素没有在当前的scroll内，则不继续执行
     if (!parentRef.current.contains(targetEl)) return
     const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
-    scrollTo(scrollNumber)
+    if (scrollOrientation === "y") {
+      parentRef.current.scrollTop = scrollNumber
+    } else if (scrollOrientation === "x") {
+      parentRef.current.scrollLeft = scrollNumber
+    }
+    scrollNum.current = scrollNumber
   }, [selectId])
   //如果有需要记住焦点的焦点元素，则上报给主组件
   useEffect(() => {
@@ -102,8 +120,8 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     if (!parentRef.current.contains(targetEl)) return
     setCacheFocusId(EngineStoreCtx.focusId)
     const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
-    scrollTo(scrollNumber)
-  }, [EngineStoreCtx.focusId, EngineStoreCtx.isVisible])
+    scrollAnimiteTo(scrollNumber)
+  }, [EngineStoreCtx.focusId])
   return <div ref={parentRef} {...restProps} id={widgetId.current}
     className={`focus-engine-scroll ${scrollOrientation === "x" ? "focus-engine-scrollx" : "focus-engine-scrolly"} ${props.className || ""}`}></div>
 }
