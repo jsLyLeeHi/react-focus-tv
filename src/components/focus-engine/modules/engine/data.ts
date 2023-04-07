@@ -53,7 +53,7 @@ export function isInScrollId(id: string, scrollList: TypeScrollIdItem[]) {
     if (_returnId) continue;
   }
   return {
-    id: _returnId,
+    cacheId: _returnId,
     item,
     idx
   }

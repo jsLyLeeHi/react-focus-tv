@@ -130,11 +130,10 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     // 初始化距离和最近元素的变量
     const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
     //查找scroll中的缓存焦点元素的id,
-    const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)?.id
-    let _id = _catcheScrollId ?? minDistanceElement?.id
-    //如果当前聚焦元素也是scroll中的元素
-    if (scrollInfo?.id === _catcheScrollId) return minDistanceElement?.id
-    return _id
+    const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)?.cacheId
+    //如果找到_catcheScrollId并且页面中存在_catcheScrollId这个焦点元素并且scrollInfo中的cacheId等于_catcheScrollId时
+    if (_catcheScrollId && allElementsIdList.find(v => v.id === _catcheScrollId) && (scrollInfo?.cacheId !== _catcheScrollId)) return _catcheScrollId
+    return minDistanceElement?.id
   } catch (error) {
     console.error(error);
 
