@@ -1,5 +1,6 @@
 import { TypeswitchFocus, TypeScrollIdItem, TypeFocusItem } from "../type"
 import { isInScrollId, getOverlapArea, isVisualInScroll } from "./data"
+import { contains, getBoundingClientRect } from "../../path/untils"
 
 
 
@@ -43,9 +44,9 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     const scrollInfo = isInScrollId(currentElementId, scrollList)
     // 获取当前元素的DOM元素节点和位置信息
     const currentElement = document.getElementById(currentElementId) as HTMLElement;
-    const currentElementRect = currentElement.getBoundingClientRect();
+    const currentElementRect = getBoundingClientRect(currentElement);
     const currentElementScroll = document.getElementById(scrollInfo.item?.id || "")
-    const currentEleIsInScroll = currentElementScroll?.contains(currentElement)
+    const currentEleIsInScroll = currentElementScroll && contains(currentElementScroll, currentElement)
     const currentElementCenter = {
       x: currentElementRect.left + currentElementRect.width / 2,
       y: currentElementRect.top + currentElementRect.height / 2,
@@ -60,7 +61,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     for (const item of allElementsIdList) {
       // 获取当前元素的DOM元素节点和位置信息
       const element = document.getElementById(item.id) as HTMLElement;
-      const elementRect = element.getBoundingClientRect();
+      const elementRect = getBoundingClientRect(element);
       const elementCenter = {
         x: elementRect.left + elementRect.width / 2,
         y: elementRect.top + elementRect.height / 2,
@@ -82,7 +83,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!rightGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "x" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll?.contains(element))
+            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
           }
           break;
         case "LEFT":
@@ -90,7 +91,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!leftGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "x" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll?.contains(element))
+            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
           }
           break;
         case "UP":
@@ -98,7 +99,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!upGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "y" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll?.contains(element))
+            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
           }
           break;
         case "DOWN":
@@ -106,7 +107,7 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!downGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "y" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll?.contains(element))
+            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
           }
           break;
       }
@@ -124,11 +125,14 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     //过滤调当前选中的焦点元素和在scroll中不可视的焦点元素并且元素在指定方向上
     const flutterList = distanceList.filter(v => v.isScrollVisual && v.isSameDirection && (v.id !== currentElementId) && v.isCanScrollOut)
     //查找出优先跳转的元素
-    const isgotoList = flutterList.filter(v => v.isgoto)
-    //优先跳转goto指定的焦点元素，如果没有则使用移动方向上与当前元素坐标方向上有面积重合的焦点元素
-    let _list: TypeDistanceItem[] = (isgotoList.length > 0) ? isgotoList : flutterList.filter(v => v.overlapArea)
+    const isgotoList = flutterList.filter(v => v.isgoto),
+      //查找出焦点跳转方向上有重叠部分的元素
+      isOverlapAreaList = flutterList.filter(v => v.overlapArea)
+    //优先跳转goto指定的焦点元素，如果没有则使用移动方向上与当前元素坐标方向上有面积重合的焦点元素,如果焦点坐标方向上没有重叠部分的元素，则使用最近的元素
+    let _list: TypeDistanceItem[] = (isgotoList.length > 0) ? isgotoList : (isOverlapAreaList.length > 0) ? isOverlapAreaList : flutterList
     // 初始化距离和最近元素的变量
     const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
+
     //查找scroll中的缓存焦点元素的id,
     const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)?.cacheId
     //如果找到_catcheScrollId并且页面中存在_catcheScrollId这个焦点元素并且scrollInfo中的cacheId等于_catcheScrollId时

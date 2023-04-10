@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react'
-import { getUUid } from '../../path/untils';
+import { getUUid, contains } from '../../path/untils';
 import { EngineStore } from "../../store/engine"
 import { getScrollNumber } from "./data"
 import { config } from "../../path/config"
@@ -63,7 +63,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     const _list: TypeFocusItem[] = EngineStoreCtx.focusList.filter(v => {
       if (!parentRef.current) return
       const ele = document.getElementById(v.id) as HTMLElement;
-      return parentRef.current.contains(ele)
+      return contains(parentRef.current, ele)
     })
     return _list
   }
@@ -84,7 +84,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     const targetEl = document.getElementById(selectId) as HTMLElement;
     if (!targetEl) return
     //如果该元素没有在当前的scroll内，则不继续执行
-    if (!parentRef.current.contains(targetEl)) return
+    if (!contains(parentRef.current, targetEl)) return
     const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
     if (scrollOrientation === "y") {
       parentRef.current.scrollTop = scrollNumber
@@ -117,7 +117,7 @@ const Scroll: React.FC<TypeScrollProps> = (props) => {
     const targetEl = document.getElementById(EngineStoreCtx.focusId) as HTMLElement;
     if (!targetEl) return
     //如果该元素没有在当前的scroll内，则不继续执行
-    if (!parentRef.current.contains(targetEl)) return
+    if (!contains(parentRef.current, targetEl)) return
     setCacheFocusId(EngineStoreCtx.focusId)
     const scrollNumber = getScrollNumber({ ele: targetEl, scrollOrientation, offsetDistance, parentRef })
     scrollAnimiteTo(scrollNumber)

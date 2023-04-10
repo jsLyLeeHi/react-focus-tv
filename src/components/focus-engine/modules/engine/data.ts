@@ -1,10 +1,11 @@
 import { TypeScrollIdItem } from "../type"
+import { contains, getBoundingClientRect } from "../../path/untils"
 
 
 /**获取元素是否在页面中 */
 export function isInViewport(ele?: HTMLDivElement | null): boolean {
   if (!ele) return false
-  const rect = ele.getBoundingClientRect();
+  const rect = getBoundingClientRect(ele);
   const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
   return isVisible
 }
@@ -15,13 +16,13 @@ export function isInViewport(ele?: HTMLDivElement | null): boolean {
 /**查找元素是否在scroll的可视区域内 */
 export function isVisualInScroll(idList: TypeScrollIdItem[], ele: HTMLElement) {
   let isVisual = true
-  const childRect = ele.getBoundingClientRect();
+  const childRect = getBoundingClientRect(ele);
 
   for (let i = 0; i < idList.length; i++) {
     const val = idList[i];
     const dom = document.getElementById(val.id) as HTMLElement
-    if (dom.contains(ele)) {
-      const containerRect = dom.getBoundingClientRect();
+    if (dom && contains(dom, ele)) {
+      const containerRect = getBoundingClientRect(dom);
       // isInViewport 表示子元素是否在可视区域内
       isVisual = (childRect.top + childRect.height) >= containerRect.top &&
         (childRect.bottom - childRect.height) <= containerRect.bottom &&
