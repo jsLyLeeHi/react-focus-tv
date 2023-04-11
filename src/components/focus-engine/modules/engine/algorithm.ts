@@ -67,6 +67,8 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
         y: elementRect.top + elementRect.height / 2,
       };
 
+      // 当前焦点元素和目标元素是否同一个scroll
+      const isSameScroll = currentEleIsInScroll && contains(currentElementScroll, element)
       // 检查目标元素是否在指定方向上
       let isSameDirection = false;
       // 检查目标轴上有重叠部分的目标元素
@@ -74,40 +76,40 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
       // 是否可以跳转出scroll
       let isCanScrollOut = true
       // 检查元素是否在scroll中可视
-      let isScrollVisual = isVisualInScroll(scrollList, element);
+      let isScrollVisual = isSameScroll ? true : isVisualInScroll(scrollList, element);
       //是否优先跳转,如果标记了多个优先跳转，则优先跳转距离最近的元素，这里是考虑焦点元素可能在页面上消失
       let isgoto = false
       switch (direction) {
         case "RIGHT":
-          isSameDirection = elementRect.left > (currentElementRect.left + currentElementRect.width);
+          isSameDirection = elementRect.left >= (currentElementRect.left + currentElementRect.width);
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!rightGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "x" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
+            isCanScrollOut = !!isSameScroll
           }
           break;
         case "LEFT":
-          isSameDirection = (elementRect.left + elementRect.width) < currentElementRect.left;
+          isSameDirection = (elementRect.left + elementRect.width) <= currentElementRect.left;
           overlapArea = getOverlapArea(currentElementRect, elementRect, "x")
           isgoto = !!leftGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "x" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
+            isCanScrollOut = !!isSameScroll
           }
           break;
         case "UP":
-          isSameDirection = (elementRect.top + elementRect.height) < currentElementRect.top;
+          isSameDirection = (elementRect.top + elementRect.height) <= currentElementRect.top;
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!upGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "y" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
+            isCanScrollOut = !!isSameScroll
           }
           break;
         case "DOWN":
-          isSameDirection = elementRect.top > (currentElementRect.top + currentElementRect.height);
+          isSameDirection = elementRect.top >= (currentElementRect.top + currentElementRect.height);
           overlapArea = getOverlapArea(currentElementRect, elementRect, "y")
           isgoto = !!downGo.find(v => v === item.id)
           if (scrollInfo?.item?.scrollOrientation === "y" && scrollInfo?.item?.scrollOut === false) {
-            isCanScrollOut = !!(currentEleIsInScroll && currentElementScroll && contains(currentElementScroll, element))
+            isCanScrollOut = !!isSameScroll
           }
           break;
       }
@@ -125,14 +127,18 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
     //过滤调当前选中的焦点元素和在scroll中不可视的焦点元素并且元素在指定方向上
     const flutterList = distanceList.filter(v => v.isScrollVisual && v.isSameDirection && (v.id !== currentElementId) && v.isCanScrollOut)
     //查找出优先跳转的元素
-    const isgotoList = flutterList.filter(v => v.isgoto),
-      //查找出焦点跳转方向上有重叠部分的元素
-      isOverlapAreaList = flutterList.filter(v => v.overlapArea)
+    const isgotoList = flutterList.filter(v => v.isgoto)
+    if (isgotoList.length > 0) {
+      // 初始化距离和最近元素的变量
+      const minDistanceElement = isgotoList.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), isgotoList[0]);
+      return minDistanceElement?.id ?? currentElementId
+    }
+    //查找出焦点跳转方向上有重叠部分的元素
+    const isOverlapAreaList = flutterList.filter(v => v.overlapArea)
     //优先跳转goto指定的焦点元素，如果没有则使用移动方向上与当前元素坐标方向上有面积重合的焦点元素,如果焦点坐标方向上没有重叠部分的元素，则使用最近的元素
-    let _list: TypeDistanceItem[] = (isgotoList.length > 0) ? isgotoList : (isOverlapAreaList.length > 0) ? isOverlapAreaList : flutterList
+    let _list: TypeDistanceItem[] = (isOverlapAreaList.length > 0) ? isOverlapAreaList : flutterList
     // 初始化距离和最近元素的变量
     const minDistanceElement = _list.reduce((minElement, currentElement) => (currentElement.distance < minElement.distance ? currentElement : minElement), _list[0]);
-
     //查找scroll中的缓存焦点元素的id,
     const _catcheScrollId = isInScrollId(minDistanceElement?.id, scrollList)?.cacheId
     //如果找到_catcheScrollId并且页面中存在_catcheScrollId这个焦点元素并且scrollInfo中的cacheId等于_catcheScrollId时
