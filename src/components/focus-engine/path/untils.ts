@@ -33,16 +33,21 @@ export function contains(parent?: HTMLElement | null, child?: HTMLElement | null
 
 export interface MyDOMRect { top: number, left: number, right: number, bottom: number, width: number, height: number }
 export function getBoundingClientRect(el: HTMLElement): DOMRect {
-  const rect = el.getBoundingClientRect();
-  // const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-  // const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  // const clientLeft = document.documentElement.clientLeft || 0;
-  // const clientTop = document.documentElement.clientTop || 0;
-  // const left = rect.left + scrollLeft - clientLeft;
-  // const top = rect.top + scrollTop - clientTop;
-  // const width = rect.width;
-  // const height = rect.height;
-  // const right = rect.right + scrollLeft - clientLeft;
-  // const bottom = rect.bottom + scrollTop - clientTop;
-  return rect
+  const rect = el.getBoundingClientRect() || {};
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const clientLeft = document.documentElement.clientLeft || 0;
+  const clientTop = document.documentElement.clientTop || 0;
+  return {
+    left: rect.left + scrollLeft - clientLeft,
+    top: rect.top + scrollTop - clientTop,
+    width: rect.width,
+    height: rect.height,
+    right: rect.right + scrollLeft - clientLeft,
+    bottom: rect.bottom + scrollTop - clientTop,
+    x: rect.x || rect.left,
+    y: rect.y || rect.top,
+    toJSON: rect.toJSON || (() => { }),
+    ...(rect as any)
+  }
 }
