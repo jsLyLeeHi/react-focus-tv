@@ -3,6 +3,32 @@
     padding: 36px 0 36px 95px;
     background: url("@/assets/icons/images/vip.png") no-repeat;
     background-position: 35px center;
+    display: flex;
+    align-items: center;
+
+    .top-scroll {
+      display: flex;
+      align-items: center;
+      width: 500px;
+
+      .item {
+        width: 200px;
+        height: 64px;
+        padding: 10px;
+
+        &.widget-selected {
+          background-color: rgba(255, 255, 255, 0.3);
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          color: #F3DDA7;
+        }
+
+        &.widget-focus {
+          background-color: #E2B163;
+          color: #581414;
+        }
+      }
+    }
   }
 
   .index-scroll {

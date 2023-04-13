@@ -28,14 +28,21 @@ export default function MyPage() {
 
   return <FocusEngine className="page-box bg-black" focusId={datalist[0].itemList[0].itemId}>
     <div className='index-left'>
-      <div className='title c-main s-lg-3'>订购会员</div>
+      <div className='title c-main s-lg-3'>
+        <span>订购会员</span>
+        <FocusScroll className='top-scroll' scrollOrientation='x'>
+          {datalist.map((val, idx) => (
+            <FocusEngine.Item className='item s-sm' leftGo={idx === 0 ? [datalist[0].productName] : undefined} key={idx}>{val.productName}</FocusEngine.Item>
+          ))}
+        </FocusScroll>
+      </div>
       <div className='index-scroll'>
         <FocusScroll className='left-scroll' scrollOrientation='y' scrollOut={false}>
           {datalist.map((val, idx) => (
-            <FocusEngine.Item className='box-item' key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
+            <FocusEngine.Item className='box-item' id={val.productName} key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
           ))}
         </FocusScroll>
-        <FocusScroll className='right-scroll' scrollOrientation='y' scrollOut={false} selectId={selectIdItem?.selectId}>
+        <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
           {selectProduct.itemList.map(val => (
             <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
