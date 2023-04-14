@@ -113,7 +113,8 @@ function getNearestElementId(currentElementId: string, allElementsIdList: TypeFo
           }
           break;
       }
-      const distance = Math.sqrt(Math.pow(elementCenter.x - currentElementCenter.x, 2) + Math.pow(elementCenter.y - currentElementCenter.y, 2));
+      // 计算距离
+      const distance = Math.abs(elementCenter.x - currentElementCenter.x) + Math.abs(elementCenter.y - currentElementCenter.y);
       distanceList.push({
         id: item.id,
         distance,
