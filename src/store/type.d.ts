@@ -1,5 +1,17 @@
 export interface TypeUserInfo {
-  userId: string
+  mac: string,
+  userId: string,
+  custId: string,
+  uid: string,
+  sno: string,
+  usertoken: string,
+  deviceId: string,
+  ucsPhoneNo: string,
+  loginPhoneNo: string,
+  defaultPayAccount: string,
+  paymentAccount: string,
+  extension: any[],
+  userToken: string
 }
 
 export interface TypeAppData {

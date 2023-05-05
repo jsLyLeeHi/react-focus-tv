@@ -5,18 +5,32 @@ import { ContextProps, TypeAppData } from "./type"
 export const localKey = "localStorageAppData"
 
 
-export const defAppData: ContextProps = {
-  appData: {
-    userInfo: {
-      userId: ""
+export const defAppData = function (): ContextProps {
+  return {
+    appData: {
+      userInfo: {
+        mac: "",
+        userId: "",
+        custId: "",
+        uid: "",
+        sno: "",
+        usertoken: "",
+        deviceId: "",
+        ucsPhoneNo: "",
+        loginPhoneNo: "",
+        defaultPayAccount: "",
+        paymentAccount: "",
+        extension: [],
+        userToken: ""
+      },
+      routeInfo: {
+        id: ""
+      }
     },
-    routeInfo: {
-      id: ""
-    }
-  },
-  setAppData: () => { }
+    setAppData: () => { }
+  }
 }
-export const AppContext = createContext<ContextProps>(defAppData);
+export const AppContext = createContext<ContextProps>(defAppData());
 
 export function useStore() {
   const { appData, setAppData } = useContext(AppContext);
@@ -55,9 +69,7 @@ export function useStore() {
 }
 
 
-
 export default function AppContextProvider(props: { children: ReactNode | ReactNode[] }) {
-  const [appData, setAppData] = useState<TypeAppData>(storage.getLocalStorage(localKey) || defAppData.appData);
-
+  const [appData, setAppData] = useState<TypeAppData>(storage.getLocalStorage(localKey) || defAppData().appData);
   return <AppContext.Provider value={{ appData, setAppData }}>{props.children}</AppContext.Provider>
 }

@@ -3,9 +3,12 @@ import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
 import { produstList } from "./data"
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '@/store';
+import { getProjects } from '@/path/api';
 import "./index.less"
 
 export default function MyPage() {
+  const { userInfo } = useAppContext();
   const navigate = useNavigate();
   const [datalist] = useState(produstList)
   const [selectProduct, setSelectProduct] = useState(produstList[0])
@@ -13,6 +16,10 @@ export default function MyPage() {
   useEffect(() => {
     setSelectIdList(datalist.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
   }, [])
+  useEffect(() => {
+    if(!userInfo.mac) return
+    getProjects()
+  }, [userInfo])
   function onItemFocus(val: any) {
     const _list = cloneDeep(selectIdList)
     const _idx = _list.findIndex(val => val.productName == selectProduct.productName)
