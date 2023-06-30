@@ -13,7 +13,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   const engineRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsViseble] = useState(false)
 
-  const { listenerKeydown, onInput, onBack, onHome, onBackSpace, onDel, onMenu, onEnter, focusId, ...restProps } = props;
+  const { listenerKeydown, engineType, onInput, onBack, onHome, onBackSpace, onDel, onMenu, onEnter, focusId, ...restProps } = props;
   const [storeFocusId, setStoreFocusId] = useState<string>("")
   const [storeKeyCode, setStoreKeyCode] = useState<{ value?: TypeKeyCode }>({})
   const refStoreValue = useRef<string>("")
@@ -116,14 +116,15 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       setStore(_id)
       return
     }
-
-    if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
-    if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
-    if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
-    if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
-    if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
-    if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
-    if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
+    setTimeout(() => {
+      if (_keyValue === "HOME") return (onHome instanceof Function) && onHome()
+      if (_keyValue === "BACKSPACE") return (onBackSpace instanceof Function) && onBackSpace()
+      if (_keyValue === "DEL") return (onDel instanceof Function) && onDel()
+      if (_keyValue === "MENU") return (onMenu instanceof Function) && onMenu()
+      if (_keyValue === "ENTER") return (onEnter instanceof Function) && onEnter()
+      if (_keyValue === "BACK") return (onBack instanceof Function) && onBack()
+      if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
+    });
   }
   useEffect(function () {
     const onkey = throttle(onKeyDown, config.clickInterval)

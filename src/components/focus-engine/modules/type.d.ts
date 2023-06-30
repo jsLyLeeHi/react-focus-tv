@@ -23,6 +23,7 @@ export type TypeswitchFocus = {
 
 
 export type FocusEngineProps = {
+  engineType?: string,
   children?: ReactNode;
   /**是否监听keydown @default true */
   listenerKeydown?: boolean;
