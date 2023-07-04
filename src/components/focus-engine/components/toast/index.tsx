@@ -3,10 +3,12 @@ import React from 'react';
 import "./index.less"
 
 const _modalId = "toast-popup-id"
+const timerinfo: { current: any } = { current: null }
 export default function (val: React.ReactNode, timer = 2000) {
+  clearTimeout(timerinfo.current)
   return new Promise((resolve, _) => {
-
-    setTimeout(() => {
+    timerinfo.current = setTimeout(() => {
+      clearTimeout(timerinfo.current)
       FocusEngine.changePopup(_modalId, false)
       resolve(true)
     }, timer);
