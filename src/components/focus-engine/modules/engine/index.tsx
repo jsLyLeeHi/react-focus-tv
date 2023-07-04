@@ -179,7 +179,6 @@ const Engine: React.FC<FocusEngineProps> & {
     })
   }
   function onChangeNode(id: string, node: React.ReactNode) {
-    console.log(renderNodesList);
     const _list = cloneDeep(renderNodesList)
     const _idx = _list.findIndex(c => c.id === id)
     if (_idx < 0) {
@@ -187,7 +186,6 @@ const Engine: React.FC<FocusEngineProps> & {
     } else {
       _list[_idx] = { id, node }
     }
-    console.log(_list);
     setRenderNodes(_list)
   }
   /**动态在底部插入元素 */
@@ -216,8 +214,6 @@ const Engine: React.FC<FocusEngineProps> & {
     scrollEleCreate,
     scrollEleDestroy,
   }
-  console.log(renderNodesList,"renderNodesList");
-  
   return (
     <EngineStore.Provider value={paramsValue}>
       <div {...restProps} ref={engineRef} style={props.hidden ? { display: "none" } : {}} />

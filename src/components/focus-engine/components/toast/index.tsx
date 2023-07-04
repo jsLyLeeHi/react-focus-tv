@@ -7,14 +7,15 @@ export default function (val: React.ReactNode, timer = 2000) {
   return new Promise((resolve, _) => {
 
     setTimeout(() => {
-      console.log("onRenderNode");
-
-      FocusEngine.onRenderNode(_modalId, null)
+      FocusEngine.changePopup(_modalId, false)
       resolve(true)
     }, timer);
 
-    FocusEngine.onRenderNode(_modalId, <div className="toast-page items-page">
+    FocusEngine.onRenderNode(_modalId, <FocusEngine.Popup style={{ backgroundColor: "rgba(0,0,0,0)" }} popupId={_modalId} className="toast-page">
       <div className="toast-value">{val}</div>
-    </div>)
+    </FocusEngine.Popup>)
+    setTimeout(() => {
+      FocusEngine.changePopup(_modalId, true)
+    });
   })
 }
