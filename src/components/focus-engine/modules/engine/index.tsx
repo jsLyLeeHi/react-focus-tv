@@ -5,6 +5,7 @@ import { switchFocus } from './algorithm'
 import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, FocusEnginePopupProps, TypeScrollIdItem, TypeFocusItem, TypePopupItem } from '../type'
 import { EngineItem } from "../engineItem"
 import { EnginePopup } from "../enginePopup"
+import onDialog from "../../components/dialog"
 import { cloneDeep, isNaN, throttle } from 'lodash'
 import { isInViewport } from "./data"
 import { config } from "../../path/config"
@@ -16,6 +17,8 @@ const Engine: React.FC<FocusEngineProps> & {
   Item: React.FC<FocusEngineItemProps>,
   Popup: React.FC<FocusEnginePopupProps>,
   changePopup: (id: string, visible: boolean) => void
+  onRenderNode: (id: string, node: React.ReactNode) => void
+  onDialog: () => void
 } = (props) => {
   const engineRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsViseble] = useState(false)
@@ -35,6 +38,7 @@ const Engine: React.FC<FocusEngineProps> & {
   const focusList = useRef<TypeFocusItem[]>([])
   /**弹窗的元素列表 */
   const [popupList, setPopupList] = useState<TypePopupItem[]>([])
+  const [renderNodesList, setRenderNodes] = useState<{ id: string, node: React.ReactNode }[]>([])
   const popupListref = useRef<TypePopupItem[]>([])
   function setStore(defVal: string = refStoreValue.current) {
     if (!defVal) return
@@ -172,6 +176,17 @@ const Engine: React.FC<FocusEngineProps> & {
       isVisible: visible
     })
   }
+  /**动态在底部插入元素 */
+  Engine.onRenderNode = function (id: string, node: React.ReactNode) {
+    const _list = cloneDeep(renderNodesList)
+    const _idx = _list.findIndex(c => c.id === id)
+    if (_idx < 0) {
+      _list.push({ id, node })
+    } else {
+      _list[_idx] = { id, node }
+    }
+    setRenderNodes(_list)
+  }
   useEffect(function () {
     onEventCenter.on("enginePopup", changePopup)
     const onkey = throttle(onKeyDown, config.clickInterval)
@@ -199,14 +214,15 @@ const Engine: React.FC<FocusEngineProps> & {
   return (
     <EngineStore.Provider value={paramsValue}>
       <div {...restProps} ref={engineRef} style={props.hidden ? { display: "none" } : {}} />
+      {renderNodesList.map(v => <div id={"nodes-item" + v.id} key={"nodes-item" + v.id}>{v.node}</div>)}
     </EngineStore.Provider>
   );
 };
 Engine.Item = EngineItem;
 Engine.Popup = EnginePopup;
-Engine.changePopup = function (id: string, visible: boolean) {
-  onEventCenter.fire("enginePopup", id, visible)
-}
+Engine.changePopup = (id: string, visible: boolean) => onEventCenter.fire("enginePopup", id, visible)
+Engine.onRenderNode = function () { }
+Engine.onDialog = onDialog
 
 
 export const FocusEngine = Engine
