@@ -61,7 +61,8 @@ export type FocusEngineItemProps = {
 export type FocusEnginePopupProps = {
   popupId: string,
   backClose?: boolean,
-  onClose?: () => void
+  onClose?: () => void,
+  onEnter?: () => void,
 } & React.HTMLAttributes<HTMLDivElement>;
 
 

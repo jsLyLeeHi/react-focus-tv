@@ -5,7 +5,7 @@ import "./index.less"
 
 
 export const EnginePopup: React.FC<FocusEnginePopupProps> = (props) => {
-  const { popupId, backClose, onClose, ...restProps } = props
+  const { popupId, backClose, onClose, onEnter, ...restProps } = props
   const firstIn = useRef(true)
   const EngineStoreCtx = useContext(EngineStore)
   const [isShowView, setIsShowView] = useState(false)
@@ -28,6 +28,7 @@ export const EnginePopup: React.FC<FocusEnginePopupProps> = (props) => {
   }, [EngineStoreCtx.popupList])
 
   function onBack() {
+    if (!backClose) return
     EngineStoreCtx.popupCreate({
       id: popupId,
       isVisible: false
@@ -35,14 +36,14 @@ export const EnginePopup: React.FC<FocusEnginePopupProps> = (props) => {
   }
   useEffect(() => {
     const _keyValue = EngineStoreCtx.keyCode.value
+    if (_keyValue === "ENTER" && (onEnter instanceof Function)) onEnter()
     if ((_keyValue === "BACKSPACE" || _keyValue === "BACK") && !firstIn.current) {
       if (onClose instanceof Function) onClose()
-      if (!backClose) return
       onBack()
     } else {
       firstIn.current = false
     }
   }, [EngineStoreCtx.keyCode])
 
-  return <div {...restProps} className='engine-popup page-box' style={!isShowView ? { display: "none" } : {}}></div>
+  return <div {...restProps} className='engine-popup page-box' key={"aasasaaasassafga"} style={!isShowView ? { display: "none" } : {}}></div>
 }
