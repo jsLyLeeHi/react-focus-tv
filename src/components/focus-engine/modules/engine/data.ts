@@ -6,7 +6,7 @@ import { contains, getBoundingClientRect } from "../../path/untils"
 export function isInViewport(ele?: HTMLDivElement | null): boolean {
   if (!ele) return false
   const rect = getBoundingClientRect(ele);
-  const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+  const isVisible = (rect.top < window.innerHeight || rect.left < window.innerWidth) && (rect.bottom > 0 || rect.right > 0);
   return isVisible
 }
 

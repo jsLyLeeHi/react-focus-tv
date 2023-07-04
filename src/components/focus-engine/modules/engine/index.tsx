@@ -2,14 +2,21 @@ import React, { useEffect, useRef, useState } from 'react'
 import { TypeKeyCode, keyCode } from "../../key_iptv";
 import { EngineStore } from "../../store/engine"
 import { switchFocus } from './algorithm'
-import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, TypeScrollIdItem, TypeFocusItem } from '../type'
+import { TypeswitchFocus, FocusEngineProps, FocusEngineItemProps, FocusEnginePopupProps, TypeScrollIdItem, TypeFocusItem, TypePopupItem } from '../type'
 import { EngineItem } from "../engineItem"
+import { EnginePopup } from "../enginePopup"
 import { cloneDeep, isNaN, throttle } from 'lodash'
 import { isInViewport } from "./data"
 import { config } from "../../path/config"
+import onfire from '../../path/onfire';
+export const onEventCenter = new onfire();
 
 
-const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps> } = (props) => {
+const Engine: React.FC<FocusEngineProps> & {
+  Item: React.FC<FocusEngineItemProps>,
+  Popup: React.FC<FocusEnginePopupProps>,
+  changePopup: (id: string, visible: boolean) => void
+} = (props) => {
   const engineRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsViseble] = useState(false)
 
@@ -26,6 +33,9 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   const refIsKeydown = useRef<boolean | undefined>()
   /**焦点元素id列表 */
   const focusList = useRef<TypeFocusItem[]>([])
+  /**弹窗的元素列表 */
+  const [popupList, setPopupList] = useState<TypePopupItem[]>([])
+  const popupListref = useRef<TypePopupItem[]>([])
   function setStore(defVal: string = refStoreValue.current) {
     if (!defVal) return
     if (!focusList.current.find(v => v.id === defVal)) {
@@ -34,6 +44,30 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     }
     refStoreValue.current = defVal
     setStoreFocusId(defVal)
+  }
+  /**子组件中有popup创建了 */
+  function popupCreate(p: TypePopupItem) {
+    const _list = cloneDeep(popupListref.current)
+    const _idx = _list.findIndex(c => c.id === p.id)
+    if (_idx < 0) {
+      _list.push(p)
+    } else {
+      _list[_idx] = p
+    }
+    popupListref.current = _list
+    setPopupList(_list)
+  }
+  /**子组件中有popup销毁了 */
+  function popupDestroy(p: TypePopupItem) {
+    const _list = cloneDeep(popupListref.current)
+    const _idx = _list.findIndex(c => c.id === p.id)
+    if (_idx < 0) {
+      _list.push(p)
+    } else {
+      _list[_idx] = p
+    }
+    popupListref.current = _list
+    setPopupList(_list)
   }
   /**子组件中有widget创建了 */
   function widgetCreate(p: TypeFocusItem) {
@@ -82,6 +116,7 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
     firstIn.current = false
   }, [focusId])
   useEffect(() => {
+    setIsViseble(isInViewport(engineRef.current))
     refIsKeydown.current = listenerKeydown
   }, [listenerKeydown])
   //初始化当前选中项
@@ -97,13 +132,17 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   function onKeyDown(ev: KeyboardEvent) {
     ev.preventDefault();
     ev.stopPropagation();
+    const _isViseble = isInViewport(engineRef.current)
+    setIsViseble(_isViseble)
     //判断页面是否被隐藏，如果被隐藏，则不监听按键
-    if (!isInViewport(engineRef.current)) return
+    if (!_isViseble) return
     //如果设置不监听按键，则不继续执行
     if (refIsKeydown.current === false) return
     const _keyValue = keyCode[ev.keyCode]
     if (!_keyValue) return
     setStoreKeyCode({ value: _keyValue })
+    //如果有弹窗处于显示状态，则不继续执行
+    if (popupListref.current.find(v => v.isVisible === true)) return
     //焦点操作
     if (_keyValue === "RIGHT" || _keyValue === "LEFT" || _keyValue === "UP" || _keyValue === "DOWN") {
       const moveFn = switchFocus[_keyValue as keyof TypeswitchFocus]
@@ -126,21 +165,33 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
       if (!isNaN(_keyValue)) return (onInput instanceof Function) && onInput(_keyValue)
     });
   }
+  function changePopup(pid: string, visible: boolean) {
+    if (!popupListref.current.find(v => v.id === pid)) return
+    popupCreate({
+      id: pid,
+      isVisible: visible
+    })
+  }
   useEffect(function () {
+    onEventCenter.on("enginePopup", changePopup)
     const onkey = throttle(onKeyDown, config.clickInterval)
     window.addEventListener("keydown", onkey)
     return () => {
       window.removeEventListener("keydown", onkey)
+      onEventCenter.off("enginePopup", changePopup)
     }
   }, [])
   const paramsValue = {
     focusId: storeFocusId,
     keyCode: storeKeyCode,
     focusList: focusList.current,
+    popupList: popupList,
     scrollList,
     isVisible,
     widgetCreate,
     widgetDestroy,
+    popupCreate,
+    popupDestroy,
     setCurentId,
     scrollEleCreate,
     scrollEleDestroy,
@@ -152,6 +203,10 @@ const Engine: React.FC<FocusEngineProps> & { Item: React.FC<FocusEngineItemProps
   );
 };
 Engine.Item = EngineItem;
+Engine.Popup = EnginePopup;
+Engine.changePopup = function (id: string, visible: boolean) {
+  onEventCenter.fire("enginePopup", id, visible)
+}
 
 
 export const FocusEngine = Engine

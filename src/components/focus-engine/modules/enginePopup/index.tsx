@@ -1,68 +1,47 @@
-import React, { useEffect, useRef, useContext } from 'react'
-import { getUUid } from '../../path/untils'
-import { TypeKeyCode } from "../../key_iptv";
+import React, { useEffect, useRef, useContext, useState } from 'react'
 import { EngineStore } from "../../store/engine"
-import { FocusEngineItemProps } from "../type"
-import { isNaN } from 'lodash';
+import { FocusEnginePopupProps } from "../type"
 import "./index.less"
 
 
-export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
-  const { renderProps, onInput, onDel, onEnter, rightGo = [], leftGo = [], upGo = [], downGo = [], ...restProps } = props
-  const widgetId = useRef(props.id || getUUid())
-  const isVisible = useRef(false)
+export const EnginePopup: React.FC<FocusEnginePopupProps> = (props) => {
+  const { popupId, backClose, ...restProps } = props
+  const firstIn = useRef(true)
   const EngineStoreCtx = useContext(EngineStore)
+  const [isShowView, setIsShowView] = useState(false)
+
   useEffect(() => {
-    EngineStoreCtx.widgetCreate({
-      id: widgetId.current,
-      rightGo,
-      leftGo,
-      upGo,
-      downGo,
+    EngineStoreCtx.popupCreate({
+      id: popupId,
+      isVisible: false
     })
     return () => {
-      EngineStoreCtx.widgetDestroy({ id: widgetId.current })
+      EngineStoreCtx.popupDestroy({
+        id: popupId,
+        isVisible: false
+      })
     }
   }, [])
   useEffect(() => {
-    isVisible.current = EngineStoreCtx.isVisible
-  }, [EngineStoreCtx.isVisible])
+    const isShow = EngineStoreCtx.popupList.find(v => v.isVisible && v.id === popupId)?.isVisible || false
+    setIsShowView(isShow)
+  }, [EngineStoreCtx.popupList])
+
+  function onBack() {
+    EngineStoreCtx.popupCreate({
+      id: popupId,
+      isVisible: false
+    })
+  }
   useEffect(() => {
-    //如果当前焦点不在该焦点元素上，则不继续执行
-    if (EngineStoreCtx.focusId !== widgetId.current) return
-    if (EngineStoreCtx.keyCode.value === "DEL") {
-      (onDel instanceof Function) && onDel()
-      return
-    }
-    if (EngineStoreCtx.keyCode.value === "ENTER") {
-      (onEnter instanceof Function) && onEnter()
-      return
-    }
-    if (!isNaN(EngineStoreCtx.keyCode.value)) {
-      (onInput instanceof Function) && onInput(EngineStoreCtx.keyCode.value as TypeKeyCode)
-      return
+    if (!backClose) return
+    const _keyValue = EngineStoreCtx.keyCode.value
+    if ((_keyValue === "BACKSPACE" || _keyValue === "BACK") && !firstIn.current) {
+      onBack()
+    } else {
+      firstIn.current = false
     }
   }, [EngineStoreCtx.keyCode])
-  useEffect(() => {
-    if ((props.onFocus instanceof Function) && (EngineStoreCtx.focusId === widgetId.current)) {
-      const _ev: any = true
-      props.onFocus(_ev)
-    }
-  }, [EngineStoreCtx.focusId])
-  function getClassName(_focus: boolean, _isselected: boolean, c?: string) {
-    let _class = _focus ? "widget-focus" : "widget-unfocus"
-    _class = `${_class} ${_isselected ? "widget-selected" : "widget-unselected"}`
-    if (!c) return _class
-    _class = c + " " + _class
-    return _class + " focus-item"
-  }
-  const _isfocus = EngineStoreCtx.focusId === widgetId.current
-  const _isselected = !!EngineStoreCtx.scrollList.find(v => v.cacheFocusId === widgetId.current)
-  return <div {...restProps} id={widgetId.current}
-    className={getClassName(_isfocus, _isselected, props.className)}
-    children={(renderProps instanceof Function) ? renderProps({
-      isFocus: _isfocus,
-      isSelected: _isselected,
-      id: widgetId.current,
-    }) : props.children}></div>
+
+  return <div {...restProps} className='engine-popup page-box' style={!isShowView ? { display: "none" } : {}}></div>
 }

@@ -30,6 +30,7 @@ export const EngineItem: React.FC<FocusEngineItemProps> = (props) => {
   useEffect(() => {
     //如果当前焦点不在该焦点元素上，则不继续执行
     if (EngineStoreCtx.focusId !== widgetId.current) return
+    if (EngineStoreCtx.popupList.find(v => v.isVisible)) return
     if (EngineStoreCtx.keyCode.value === "DEL") {
       (onDel instanceof Function) && onDel()
       return

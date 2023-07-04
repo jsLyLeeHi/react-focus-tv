@@ -6,6 +6,10 @@ export type TypeFocusItem = {
   upGo: string[],
   downGo: string[],
 }
+export type TypePopupItem = {
+  id: string,
+  isVisible: boolean
+}
 type TypeswitchFocusFun = (id: string, _list: TypeFocusItem[], scrollList: TypeScrollIdItem[]) => string | null | undefined
 export type TypeScrollIdItem = {
   id: string,
@@ -52,6 +56,11 @@ export type FocusEngineItemProps = {
   onDel?: () => void,
   onEnter?: () => void,
   renderProps?: (params: TypeRenderItem) => JSX.Element
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export type FocusEnginePopupProps = {
+  popupId: string,
+  backClose?: boolean
 } & React.HTMLAttributes<HTMLDivElement>;
 
 
