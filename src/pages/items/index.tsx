@@ -21,11 +21,6 @@ export default function MyPage() {
     setSelectIdList(_list)
   }
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
-  function onModal() {
-    FocusEngine.onDialog({
-      content: "呵呵哈哈爱书法家东方八所开发呵呵哈哈爱书法家东方八所开发呵呵哈哈家东方八所开发呵呵哈哈爱书法家东方八所开发呵呵哈哈爱书法家东方八所开发",
-    })
-  }
   return (
     <>
       <FocusEngine onBack={() => navigate(-1)} engineType="1" className="page-box items-page bg-dull" focusId={datalist[0].itemList[0].itemId}>
@@ -37,7 +32,11 @@ export default function MyPage() {
         </FocusScroll>
         <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
           {selectProduct.itemList.map((val) => (
-            <FocusEngine.Item onEnter={onModal} className='product-item'
+            <FocusEngine.Item onEnter={()=>{
+              FocusEngine.onDialog({
+                content: val.itemName,
+              })
+            }} className='product-item'
               key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
