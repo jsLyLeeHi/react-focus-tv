@@ -1,47 +1,65 @@
 import { FocusEngine, FocusScroll } from '@/components/focus-engine';
 import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
-import { produstList } from "./data"
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/store';
 import { getProjects } from '@/path/api';
+import { useRouterParams } from '@/path/untils';
 import "./index.less"
 
 export default function MyPage() {
   const { userInfo } = useAppContext();
+  const routerData = useRouterParams()
+
   const navigate = useNavigate();
-  const [datalist] = useState(produstList)
-  const [selectProduct, setSelectProduct] = useState(produstList[0])
+  const [datalist, setDataList] = useState<any[]>([])
+  const [selectProduct, setSelectProduct] = useState<any>()
   const [selectIdList, setSelectIdList] = useState<{ productName: string, selectId: string }[]>([])
+
   useEffect(() => {
-    setSelectIdList(datalist.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
-  }, [])
-  useEffect(() => {
-    if(!userInfo.mac) return
-    getProjects()
-  }, [userInfo])
+    if (!userInfo.mac || !routerData?.outContentId) return
+    console.log(routerData);
+    let _params = {
+      cosInquiryInfo: routerData.cosInquiryInfo,
+      contentId: routerData.contentId,
+      outContentId: routerData.outContentId,
+      productId: routerData.productIds,
+      itemId: routerData.itemIds,
+      rightsId: routerData.rightsId,
+      type: routerData.type,
+      topicId: "",
+      extension: [],
+      //测试的时候，获取当前网页地址以及参数
+      // testurl: encodeURIComponent(window.location.href)
+    };
+    getProjects(_params).then((res) => {
+      setTimeout(() => {
+        FocusEngine.onToast("哈哈哈哈")
+      }, 1000);
+      const _list: any[] = res.data.productList
+      setDataList(_list)
+      setSelectProduct(_list[0])
+      setSelectIdList(_list.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
+    })
+  }, [userInfo, routerData])
   function onItemFocus(val: any) {
     const _list = cloneDeep(selectIdList)
-    const _idx = _list.findIndex(val => val.productName == selectProduct.productName)
+    const _idx = _list.findIndex(val => val.productName == selectProduct?.productName)
     if (_idx < 0) return
     _list[_idx] = { productName: val.productName, selectId: val.itemId }
     setSelectIdList(_list)
   }
-  const selectIdItem = selectIdList.find(v => v.productName === selectProduct.productName)
+  const selectIdItem = selectIdList.find(v => v.productName === selectProduct?.productName)
 
   function onRouterTo() {
-    navigate("/Items")
+    // navigate("/Items")
+      FocusEngine.onToast("哈哈哈哈")
   }
 
-  return <FocusEngine className="page-box bg-black" focusId={datalist[0].itemList[0].itemId}>
+  return <FocusEngine className="page-box bg-black" focusId={datalist[0]?.itemList[0]?.itemId || ""}>
     <div className='index-left'>
       <div className='title c-main s-lg-3'>
         <span>订购会员</span>
-        <FocusScroll className='top-scroll' scrollOrientation='x'>
-          {datalist.map((val, idx) => (
-            <FocusEngine.Item className='item s-sm' leftGo={idx === 0 ? [datalist[0].productName] : undefined} key={idx}>{val.productName}</FocusEngine.Item>
-          ))}
-        </FocusScroll>
       </div>
       <div className='index-scroll'>
         <FocusScroll className='left-scroll' scrollOrientation='y' scrollOut={false}>
@@ -50,17 +68,10 @@ export default function MyPage() {
           ))}
         </FocusScroll>
         <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
-          {selectProduct.itemList.map(val => (
+          {(selectProduct?.itemList || []).map((val: any) => (
             <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
-        <div className='left-scroll'>
-          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
-          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
-          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
-          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
-          <FocusEngine.Item className='box-item'>哈哈哈哈哈哈</FocusEngine.Item>
-        </div>
       </div>
     </div>
   </FocusEngine>

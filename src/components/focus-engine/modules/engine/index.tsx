@@ -178,6 +178,10 @@ const Engine: React.FC<FocusEngineProps> & {
       isVisible: visible
     })
   }
+  function toast(val: React.ReactNode, timer = 2000) {
+    console.log("asFocusEngine123123");
+    return onToast(val, timer)
+  }
   function onChangeNode(id: string, node: React.ReactNode) {
     const _list = cloneDeep(renderNodesList)
     const _idx = _list.findIndex(c => c.id === id)
@@ -192,11 +196,13 @@ const Engine: React.FC<FocusEngineProps> & {
   Engine.onRenderNode = onChangeNode
   useEffect(function () {
     onEventCenter.on("enginePopup", changePopup)
+    onEventCenter.on("engineToast", toast)
     const onkey = throttle(onKeyDown, config.clickInterval)
     window.addEventListener("keydown", onkey)
     return () => {
       window.removeEventListener("keydown", onkey)
       onEventCenter.off("enginePopup", changePopup)
+      onEventCenter.off("engineToast", toast)
     }
   }, [])
   const paramsValue = {
@@ -226,7 +232,7 @@ Engine.Popup = EnginePopup;
 Engine.changePopup = (id: string, visible: boolean) => onEventCenter.fire("enginePopup", id, visible)
 Engine.onRenderNode = function () { }
 Engine.onDialog = onDialog
-Engine.onToast = onToast
+Engine.onToast = (val: React.ReactNode, timer = 2000)=>onEventCenter.fire("engineToast", val, timer)
 
 
 export const FocusEngine = Engine

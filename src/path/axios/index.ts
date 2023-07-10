@@ -24,7 +24,7 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig<any>)
 // 响应拦截器
 axiosInstance.interceptors.response.use((response: AxiosResponse) => {
   // 对响应数据做一些处理
-  return response;
+  return response.data;
 }, (error) => {
   // 对响应错误做一些处理
   return Promise.reject(error);

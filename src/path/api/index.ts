@@ -1,28 +1,13 @@
 import { tvAxios } from "@/path/axios"
+import { localService } from "@/path/axios/config"
 import { getUserInfo } from '@/store';
 /**获取项目列表 */
-export function getProjects() {
-  console.log({
-    "cosInquiryInfo": "",
-    "outContentId": "CD0960505EA241B2977E57732BA079CD",
-    "productId": [],
-    "itemId": null,
-    "rightsId": [],
-    "type": "6",
-    "topicId": "",
-    "extension": [],
-    "userInfo": getUserInfo()
-  });
-  return
+export function getProjects(params: { [key: string]: any }) {
   return tvAxios.post("v3/cloudpay/queryPrice", {
-    "cosInquiryInfo": "",
-    "outContentId": "CD0960505EA241B2977E57732BA079CD",
-    "productId": [],
-    "itemId": null,
-    "rightsId": [],
-    "type": "6",
-    "topicId": "",
-    "extension": [],
+    ...params,
     "userInfo": getUserInfo()
   })
+}
+export function getAbilityStringByUrl(params: { Cmd: string, Srv?: string }) {
+  return tvAxios.get(localService, { data: params })
 }
