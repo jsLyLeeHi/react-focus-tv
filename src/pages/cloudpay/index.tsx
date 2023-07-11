@@ -18,7 +18,6 @@ export default function MyPage() {
 
   useEffect(() => {
     if (!userInfo.mac || !routerData?.outContentId) return
-    console.log(routerData);
     let _params = {
       cosInquiryInfo: routerData.cosInquiryInfo,
       contentId: routerData.contentId,
@@ -33,9 +32,6 @@ export default function MyPage() {
       // testurl: encodeURIComponent(window.location.href)
     };
     getProjects(_params).then((res) => {
-      setTimeout(() => {
-        FocusEngine.onToast("哈哈哈哈")
-      }, 1000);
       const _list: any[] = res.data.productList
       setDataList(_list)
       setSelectProduct(_list[0])
@@ -52,8 +48,7 @@ export default function MyPage() {
   const selectIdItem = selectIdList.find(v => v.productName === selectProduct?.productName)
 
   function onRouterTo() {
-    // navigate("/Items")
-      FocusEngine.onToast("哈哈哈哈")
+    navigate("/Items")
   }
 
   return <FocusEngine className="page-box bg-black" focusId={datalist[0]?.itemList[0]?.itemId || ""}>

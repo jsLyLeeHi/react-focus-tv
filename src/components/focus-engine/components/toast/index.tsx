@@ -13,11 +13,13 @@ export default function (val: React.ReactNode, timer = 2000) {
       resolve(true)
     }, timer);
 
-    FocusEngine.onRenderNode(_modalId, <FocusEngine.Popup style={{ backgroundColor: "rgba(0,0,0,0)" }} popupId={_modalId} className="toast-page">
-      <div className="toast-value">{val}</div>
-    </FocusEngine.Popup>)
     setTimeout(() => {
-      FocusEngine.changePopup(_modalId, true)
+      FocusEngine.onRenderNode(_modalId, <FocusEngine.Popup style={{ backgroundColor: "rgba(0,0,0,0)" }} popupId={_modalId} className="toast-page">
+        <div className="toast-value">{val}</div>
+      </FocusEngine.Popup>)
+      setTimeout(() => {
+        FocusEngine.changePopup(_modalId, true)
+      });
     });
   })
 }

@@ -45,9 +45,11 @@ export default function (params: TypeDialogParams) {
       </FocusEngine.Popup>
     }
     const _id = _btnsId[params.focusBtn || "confim"]
-    FocusEngine.onRenderNode(_modalId + "id", <Content {...params} onCancel={onCancel} onConfirm={onConfirm} focusBtn={_id as "calcel" | "confim"}></Content>)
     setTimeout(() => {
-      FocusEngine.changePopup(_modalId, true)
+      FocusEngine.onRenderNode(_modalId + "id", <Content {...params} onCancel={onCancel} onConfirm={onConfirm} focusBtn={_id as "calcel" | "confim"}></Content>)
+      setTimeout(() => {
+        FocusEngine.changePopup(_modalId, true)
+      }); 
     });
   })
 }

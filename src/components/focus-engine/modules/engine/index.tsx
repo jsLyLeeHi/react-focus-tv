@@ -7,6 +7,7 @@ import { EngineItem } from "../engineItem"
 import { EnginePopup } from "../enginePopup"
 import onDialog, { TypeDialogParams } from "../../components/dialog"
 import onToast from "../../components/toast"
+import onLoading from "../../components/loading"
 import { cloneDeep, isNaN, throttle } from 'lodash'
 import { isInViewport } from "./data"
 import { config } from "../../path/config"
@@ -21,6 +22,7 @@ const Engine: React.FC<FocusEngineProps> & {
   onRenderNode: (id: string, node: React.ReactNode) => void
   onDialog: (p: TypeDialogParams) => void
   onToast: (val: React.ReactNode, timer?: number) => void
+  onLoading: (val: React.ReactNode) => { hideLoading: () => void }
 } = (props) => {
   const engineRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsViseble] = useState(false)
@@ -178,10 +180,6 @@ const Engine: React.FC<FocusEngineProps> & {
       isVisible: visible
     })
   }
-  function toast(val: React.ReactNode, timer = 2000) {
-    console.log("asFocusEngine123123");
-    return onToast(val, timer)
-  }
   function onChangeNode(id: string, node: React.ReactNode) {
     const _list = cloneDeep(renderNodesList)
     const _idx = _list.findIndex(c => c.id === id)
@@ -196,13 +194,11 @@ const Engine: React.FC<FocusEngineProps> & {
   Engine.onRenderNode = onChangeNode
   useEffect(function () {
     onEventCenter.on("enginePopup", changePopup)
-    onEventCenter.on("engineToast", toast)
     const onkey = throttle(onKeyDown, config.clickInterval)
     window.addEventListener("keydown", onkey)
     return () => {
       window.removeEventListener("keydown", onkey)
       onEventCenter.off("enginePopup", changePopup)
-      onEventCenter.off("engineToast", toast)
     }
   }, [])
   const paramsValue = {
@@ -232,7 +228,8 @@ Engine.Popup = EnginePopup;
 Engine.changePopup = (id: string, visible: boolean) => onEventCenter.fire("enginePopup", id, visible)
 Engine.onRenderNode = function () { }
 Engine.onDialog = onDialog
-Engine.onToast = (val: React.ReactNode, timer = 2000)=>onEventCenter.fire("engineToast", val, timer)
+Engine.onToast = onToast
+Engine.onLoading = onLoading
 
 
 export const FocusEngine = Engine
