@@ -2,10 +2,11 @@ import { tvAxios } from "@/path/axios"
 import { localService } from "@/path/axios/config"
 import { getUserInfo } from '@/store';
 import { FocusEngine } from '@/components/focus-engine';
+import { TypeGetProjects } from "./type"
 /**获取项目列表 */
-export function getProjects(params: { [key: string]: any }) {
+export function getProjects(params: TypeGetProjects.parameter) {
   const { hideLoading } = FocusEngine.onLoading("加载中")
-  return tvAxios.post("v3/cloudpay/queryPrice", {
+  return tvAxios.post<TypeGetProjects.returnedVal>("v3/cloudpay/queryPrice", {
     ...params,
     "userInfo": getUserInfo()
   }).finally(() => {

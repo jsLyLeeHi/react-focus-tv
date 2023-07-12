@@ -29,7 +29,7 @@ export default function (params: TypeDialogParams) {
 
     function Content(props: { onCancel: () => void, onConfirm: () => void } & TypeDialogParams) {
       return <FocusEngine.Popup popupId={_modalId} onClose={() => props.onCancel()}>
-        <FocusEngine engineType="2" className="modal-dialog-page" focusId={props.focusBtn}>
+        <FocusEngine engineType="2" key={_modalId + "box"} className="modal-dialog-page" focusId={props.focusBtn}>
           <div className='modal-tit' key={_modalId + "tit"}>{props.title || "温馨提示："}</div>
           <div className='modal-cont' key={_modalId + "cont"}>{props.content}</div>
           <div className='modal-btns-box' key={_modalId + "btns-box"}>
@@ -49,7 +49,7 @@ export default function (params: TypeDialogParams) {
       FocusEngine.onRenderNode(_modalId + "id", <Content {...params} onCancel={onCancel} onConfirm={onConfirm} focusBtn={_id as "calcel" | "confim"}></Content>)
       setTimeout(() => {
         FocusEngine.changePopup(_modalId, true)
-      }); 
+      });
     });
   })
 }

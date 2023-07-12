@@ -45,6 +45,6 @@ export const EnginePopup: React.FC<FocusEnginePopupProps> = (props) => {
     }
   }, [EngineStoreCtx.keyCode])
 
-  return <div {...restProps} className='engine-popup page-box'
+  return <div {...restProps} className='engine-popup page-box' key={popupId + "popup"}
     style={!isShowView ? { display: "none", ...(props.style || {}) } : (props.style || {})}></div>
 }

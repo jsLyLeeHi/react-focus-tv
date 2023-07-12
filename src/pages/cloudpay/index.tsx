@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/store';
 import { getProjects } from '@/path/api';
+import { TypeGetProjects } from '@/path/api/type';
 import { useRouterParams } from '@/path/untils';
 import "./index.less"
 
@@ -12,9 +13,9 @@ export default function MyPage() {
   const routerData = useRouterParams()
 
   const navigate = useNavigate();
-  const [datalist, setDataList] = useState<any[]>([])
-  const [selectProduct, setSelectProduct] = useState<any>()
-  const [selectIdList, setSelectIdList] = useState<{ productName: string, selectId: string }[]>([])
+  const [datalist, setDataList] = useState<TypeGetProjects.product[]>([])
+  const [selectProduct, setSelectProduct] = useState<TypeGetProjects.product>()
+  const [selectIdList, setSelectIdList] = useState<{ productId: string, itemId: string }[]>([])
 
   useEffect(() => {
     if (!userInfo.mac || !routerData?.outContentId) return
@@ -32,20 +33,20 @@ export default function MyPage() {
       // testurl: encodeURIComponent(window.location.href)
     };
     getProjects(_params).then((res) => {
-      const _list: any[] = res.data.productList
+      const _list: TypeGetProjects.product[] = res.data.productList
       setDataList(_list)
       setSelectProduct(_list[0])
-      setSelectIdList(_list.map(val => ({ productName: val.itemList[0].productName, selectId: val.itemList[0].itemId })))
+      setSelectIdList(_list.map(val => ({ productId: val.itemList[0].productId, itemId: val.itemList[0].itemId })))
     })
   }, [userInfo, routerData])
-  function onItemFocus(val: any) {
+  function onItemFocus(val: TypeGetProjects.item) {
     const _list = cloneDeep(selectIdList)
-    const _idx = _list.findIndex(val => val.productName == selectProduct?.productName)
+    const _idx = _list.findIndex(val => val.productId == selectProduct?.productId)
     if (_idx < 0) return
-    _list[_idx] = { productName: val.productName, selectId: val.itemId }
+    _list[_idx] = { productId: val.productId, itemId: val.itemId }
     setSelectIdList(_list)
   }
-  const selectIdItem = selectIdList.find(v => v.productName === selectProduct?.productName)
+  const selectIdItem = selectIdList.find(v => v.productId === selectProduct?.productId)
 
   function onRouterTo() {
     navigate("/Items")
@@ -62,9 +63,9 @@ export default function MyPage() {
             <FocusEngine.Item className='box-item' id={val.productName} key={idx} onFocus={() => setSelectProduct(val)}>{val.productName}</FocusEngine.Item>
           ))}
         </FocusScroll>
-        <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.selectId}>
+        <FocusScroll className='right-scroll' scrollOrientation='y' selectId={selectIdItem?.itemId}>
           {(selectProduct?.itemList || []).map((val: any) => (
-            <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
+            <FocusEngine.Item onEnter={onRouterTo} className='product-item' key={val.itemId + "key"} id={val.itemId} onFocus={() => onItemFocus(val)}>{val.itemName}</FocusEngine.Item>
           ))}
         </FocusScroll>
       </div>
